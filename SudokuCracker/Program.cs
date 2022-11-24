@@ -1,3 +1,2 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
 
-Console.WriteLine("Hello, World!");
