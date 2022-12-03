@@ -2,9 +2,14 @@
 
 public struct Sudoku
 {
+	public Sudoku () {
+		//constructor here
+	}
+
 	private Group[,] groups = new Group[3, 3];
 
 
+ /*
 	public IEnumerator<Tile> GetRowEnumerator(int y)
 	{
 		var groupY = y / 3;
@@ -14,10 +19,14 @@ public struct Sudoku
 			yield return tile;
 		}
 	}
+	*/
 }
 
 public struct Group
 {
+	public Group () {
+		//constructor here
+	}
 	private Tile[,] tiles = new Tile[3, 3];
 	
 	public void Swap(byte one, byte two)
