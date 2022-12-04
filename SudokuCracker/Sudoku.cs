@@ -67,6 +67,37 @@ public class Sudoku
 			foreach (var tile in _blocks[x, blockY].GetRowEnumerable(blockRelativeY))
 				yield return tile;
 	}
+
+	public override string ToString()
+	{
+		StringBuilder sb = new();
+		const int totalWidth = (9 * 2 - 1) + 4; // 9 numbers with spaces, minus the last space, plus 2 separating bars with 2 spaces
+
+		for (var y = 0; y < 9; y++)
+		{
+			foreach (var number in GetRowEnumerable(y))
+				sb.Append($"{number} ");
+
+			insertVertically("│ ");
+			
+			if (y != 8 && (y + 1) % 3 == 0) // Add horizontal pipes
+			{
+				sb.AppendLine();
+				sb.Append('─', totalWidth - 3);
+				insertVertically("┼─");
+			}
+			
+			sb.AppendLine();
+
+			void insertVertically(string seperator)
+			{
+				sb.Insert(sb.Length - 6 * 2, seperator);
+				sb.Insert(sb.Length - 3 * 2, seperator);
+			}
+		}
+		
+		return sb.ToString();
+	}
 }
 
 public struct Block
@@ -140,5 +171,5 @@ public struct Tile
 		Value = this.Value;
 	}
 
-	public override string ToString() => Value.ToString();
+	public override string ToString() => Value > 0 ? Value.ToString() : "-";
 }
