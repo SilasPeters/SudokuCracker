@@ -12,7 +12,7 @@ public struct Sudoku
 		int h = 0;
 		for (int y = 0; y < 9; y++)
 		{
-			var found = new List<Tile>(9);
+			var found = new Tile[9];
 			foreach (var tile in GetRowEnumerable(y))
 			{
 				if (found.Contains(tile)) h += 1;
@@ -22,7 +22,7 @@ public struct Sudoku
 
 		for (int x = 0; x < 9; x++)
 		{
-			var found = new List<Tile>(9);
+			var found = new Tile[9]; //TODO: can be replaced with a list of l=9 for more speed
 			foreach (var tile in GetColumnEnumerable(x))
 			{
 				if (found.Contains(tile)) h += 1;
