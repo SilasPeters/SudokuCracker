@@ -1,16 +1,32 @@
-﻿namespace SudokuCracker;
+﻿using System.Diagnostics;
+using System.Text;
 
-public struct Sudoku
+namespace SudokuCracker;
+
+public class Sudoku
 {
-	public Sudoku () {
+	public Sudoku (IReadOnlyList<byte> numbers)
+	{
+		for (var blockY = 0; blockY < 3; blockY++) for (var blockX = 0; blockX < 3; blockX++)
+		{
+			int x = 3 * blockX,
+				y = 3 * blockY;
+
+			var tiles = new Tile[3, 3];
+			for (var by = 0; by < 3; by++) for (var bx = 0; bx < 3; bx++)
+				tiles[bx, by] = new Tile(numbers[(x + bx) + (y + by) * 9]);
+			
+			_blocks[blockX, blockY] = new Block(tiles);
+		}
 	}
 
-	private Block[,] blocks = new Block[3, 3];
+	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+	private readonly Block[,] _blocks = new Block[3, 3];
 
 	public int CalculateHeuristic()
 	{
-		int h = 0;
-		for (int y = 0; y < 9; y++)
+		var h = 0;
+		for (var y = 0; y < 9; y++)
 		{
 			var found = new List<Tile>(9);
 			foreach (var tile in GetRowEnumerable(y))
@@ -20,7 +36,7 @@ public struct Sudoku
 			}
 		}
 
-		for (int x = 0; x < 9; x++)
+		for (var x = 0; x < 9; x++)
 		{
 			var found = new List<Tile>(9);
 			foreach (var tile in GetColumnEnumerable(x))
@@ -38,7 +54,7 @@ public struct Sudoku
 		var blockX         = x / 3; // The x-index of the relevant blocks
 		var blockRelativeX = x % 3; // The x-index of the relevant column inside the blocks
 		for (var y = 0; y < 3; y++) // For every relevant block containing the specified column
-			foreach (var tile in blocks[blockX, y].GetColumnEnumerable(blockRelativeX))
+			foreach (var tile in _blocks[blockX, y].GetColumnEnumerable(blockRelativeX))
 				// For every tile in the specified column, within this block
 				yield return tile;
 	}
@@ -48,21 +64,24 @@ public struct Sudoku
 		var blockY         = y / 3;
 		var blockRelativeY = y % 3;
 		for (var x = 0; x < 3; x++)
-			foreach (var tile in blocks[x, blockY].GetRowEnumerable(blockRelativeY))
+			foreach (var tile in _blocks[x, blockY].GetRowEnumerable(blockRelativeY))
 				yield return tile;
 	}
 }
 
-public struct Block {
-	private Tile[,] tiles = new Tile[3, 3];
+public struct Block
+{
+	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+	private readonly Tile[,] _tiles = new Tile[3, 3];
 
-	public Block()
+	public Block(Tile[,] values)
 	{
+		_tiles = values;
 	}
 
 	public void Swap(byte ax, byte ay, byte bx, byte by) // TODO: Maybe define this as a 0 - 8 range index?
 	{
-		(tiles[ax, ay], tiles[bx, by]) = (tiles[bx, by], tiles[ax, ay]);
+		(_tiles[ax, ay], _tiles[bx, by]) = (_tiles[bx, by], _tiles[ax, ay]);
 	}
 
 	/// <returns>New heuristic value after swapping</returns>
@@ -76,23 +95,50 @@ public struct Block {
 	{
 		var count = 0;
 		for (var y = 0; y < 3; y++) for (var x = 0; x < 3; x++) // For every tile
-				count += tiles[x, y].Value;
-		return count == 45;
+				count += _tiles[x, y].Value;
+		return count == 45; // TODO: This is too naive, and won't always work
 	}
 
 	public IEnumerable<Tile> GetColumnEnumerable(int x)
 	{
 		for (var y = 0; y < 3; y++)
-			yield return tiles[x, y];
+			yield return _tiles[x, y];
 	}
 	public IEnumerable<Tile> GetRowEnumerable(int y)
 	{
 		for (var x = 0; x < 3; x++)
-			yield return tiles[x, y];
+			yield return _tiles[x, y];
+	}
+
+	public override string ToString() // For debugging purposes
+	{
+		StringBuilder sb = new();
+		for (int i = 0; i < 3; i++)
+		{
+			sb.Append(", ");
+			
+			foreach (var tile in GetRowEnumerable(i))
+				sb.Append($" {tile.ToString()}");
+		}
+
+		return sb.Remove(0, 2).ToString();
 	}
 }
 
+[DebuggerDisplay("{Value}")]
 public struct Tile
 {
+	public Tile(byte value)
+	{
+		this.Value = value;
+	}
+
 	public byte Value { get; set; }
+
+	public void Deconstruct(out byte Value)
+	{
+		Value = this.Value;
+	}
+
+	public override string ToString() => Value.ToString();
 }

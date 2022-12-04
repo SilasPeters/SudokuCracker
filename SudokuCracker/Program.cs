@@ -2,20 +2,24 @@
 
 class Program
 {
-    const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
+    private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
+    private static Sudoku[] _sudokus;
 
     static void Main()
     {
         Console.WriteLine("Hello, silas");
+        LoadSudokus();
     }
 
-    static void LoadSudoku()
+    static void LoadSudokus()
     {
-        // Dit is maar een random attempt
-        string input = "1 2 3 4 5 6 7 8 9";
-        var converted = input.Insert(9, "\n").Insert(18, "\n").Split().ToArray()
-            .Select(x =>
-                x.Select(y => int.Parse(x)))
-            .ToArray();
+        var lines = File.ReadAllLines(SudokuTestsPath);
+
+        var sudokuCount = lines.Length / 2;
+        _sudokus = new Sudoku[sudokuCount];
+
+        for (var i = 0; i < sudokuCount; i++)
+            _sudokus[i] = new Sudoku(lines[1 + i * 2].Split(' ').Skip(1).Select(byte.Parse).ToArray());
+                                                        //^^ Compensates for every line starting with ' '
     }
 }
