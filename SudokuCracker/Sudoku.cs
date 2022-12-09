@@ -14,7 +14,10 @@ public class Sudoku
 
 			var tiles = new Tile[3, 3];
 			for (var by = 0; by < 3; by++) for (var bx = 0; bx < 3; bx++)
-				tiles[bx, by] = new Tile(numbers[(x + bx) + (y + by) * 9]);
+			{
+				var tileValue = numbers[(x + bx) + (y + by) * 9];
+				tiles[bx, by] = new Tile(tileValue, tileValue == 0);
+			}
 			
 			_blocks[blockX, blockY] = new Block(tiles);
 		}
@@ -32,7 +35,7 @@ public class Sudoku
 			foreach (var tile in GetRowEnumerable(y))
 			{
 				if (found.Contains(tile)) h += 1;
-				else found[y] = tile;
+				else found[y]               =  tile;
 			}
 		}
 
@@ -42,7 +45,7 @@ public class Sudoku
 			foreach (var tile in GetColumnEnumerable(x))
 			{
 				if (found.Contains(tile)) h += 1;
-				else found[x] = tile;
+				else found[x]               =  tile;
 			}
 		}	
 
@@ -60,7 +63,7 @@ public class Sudoku
 	}
 
 	public IEnumerable<Tile> GetRowEnumerable(int y)
-	{	// Does the same exact thing as GetColumnEnumerable(int x), but horizontally
+	{ // Does the same exact thing as GetColumnEnumerable(int x), but horizontally
 		var blockY         = y / 3;
 		var blockRelativeY = y % 3;
 		for (var x = 0; x < 3; x++)
@@ -126,7 +129,7 @@ public struct Block
 	{
 		var count = 0;
 		for (var y = 0; y < 3; y++) for (var x = 0; x < 3; x++) // For every tile
-				count += _tiles[x, y].Value;
+			count += _tiles[x, y].Value;
 		return count == 45; // TODO: This is too naive, and won't always work
 	}
 
@@ -156,16 +159,18 @@ public struct Block
 	}
 }
 
-[DebuggerDisplay("{Value}")]
+[DebuggerDisplay("{Value}, fixed: {IsFixed}")]
 public struct Tile
 {
-	public Tile(byte value)
+	public Tile(byte value, bool isFixed)
 	{
-		this.Value = value;
+		Value   = value;
+		IsFixed = isFixed;
 	}
 
-	public byte Value { get; set; }
-
+	public byte Value   { get; set; }
+	public bool IsFixed { get; set; }
+	
 	public void Deconstruct(out byte Value)
 	{
 		Value = this.Value;
