@@ -111,6 +111,7 @@ public struct Block
 	public Block(Tile[,] values)
 	{
 		_tiles = values;
+		_FillBlock();
 	}
 
 	public void Swap(byte ax, byte ay, byte bx, byte by) // TODO: Maybe define this as a 0 - 8 range index?
@@ -147,10 +148,31 @@ public struct Block
 	public IEnumerable<Tile> GetAllTilesEnumerable ()
 	{
 		for (var y = 0; y < 3; y++)
-			for (var x = 0; x > 3; x++)
+			for (var x = 0; x < 3; x++)
 				yield return _tiles[x,y];
 	}
 
+	private void _FillBlock()
+	{
+		var presentNumbers = (
+			  from tile in GetAllTilesEnumerable()
+			 where tile.Value is not 0
+			select tile.Value
+		).Distinct().ToList();
+
+		foreach (var tile in GetAllTilesEnumerable())
+		{
+			if (tile.Value != 0) continue;
+			
+			for (byte i = 1; i <= 9; i++) // TODO: in stead of looping all posibillities, remember where you left off
+				if (!presentNumbers.Contains(i))
+				{
+					tile.Value = i;
+					presentNumbers.Add(i);
+					break; 
+				}
+		}
+	}
 
 	public override string ToString() // For debugging purposes
 	{
@@ -168,7 +190,7 @@ public struct Block
 }
 
 [DebuggerDisplay("{Value}, fixed: {IsFixed}")]
-public struct Tile
+public class Tile
 {
 	public Tile(byte value, bool isFixed)
 	{
@@ -185,25 +207,4 @@ public struct Tile
 	}
 
 	public override string ToString() => Value > 0 ? Value.ToString() : "-";
-}
-
-public Block filler (Block inpBlock)
-{
-	var list; 
-	foreach (var tile in inpBlock.GetAllTilesEnumerable())
-	{
-		if (tile != 0)
-			list.add(tile);
-		
-	}	
-	foreach (var tile in inpBlock.GetAllTilesEnumerable())
-	{
-		for (int i = 1; i < 9; i++)
-			if(tile == 0 && !list.Contains(i)){
-				list.add(i);
-				tile = i; 
-				break; 
-			}
-	}	
-
 }
