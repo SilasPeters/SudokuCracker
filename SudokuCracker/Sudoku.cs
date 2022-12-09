@@ -140,6 +140,14 @@ public struct Block
 		for (var x = 0; x < 3; x++)
 			yield return _tiles[x, y];
 	}
+	
+	public IEnumerable<Tile> GetAllTilesEnumerable ()
+	{
+		for (var y = 0; y < 3; y++)
+			for (var x = 0; x > 3; x++)
+				yield return _tiles[x,y];
+	}
+
 
 	public override string ToString() // For debugging purposes
 	{
@@ -164,7 +172,7 @@ public struct Tile
 		this.Value = value;
 	}
 
-	public byte Value { get; set; }
+	public byte Value { get; set; }`
 
 	public void Deconstruct(out byte Value)
 	{
@@ -172,4 +180,16 @@ public struct Tile
 	}
 
 	public override string ToString() => Value > 0 ? Value.ToString() : "-";
+}
+
+public Block filler (Block inpBlock)
+{
+	var list; 
+	foreach (var tile in inpBlock.GetAllTilesEnumerable())
+	{
+		if (!(tile == 0))
+			list.add(tile);
+		
+	}	
+
 }
