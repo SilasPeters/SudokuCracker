@@ -187,9 +187,18 @@ public Block filler (Block inpBlock)
 	var list; 
 	foreach (var tile in inpBlock.GetAllTilesEnumerable())
 	{
-		if (!(tile == 0))
+		if (tile != 0)
 			list.add(tile);
 		
+	}	
+	foreach (var tile in inpBlock.GetAllTilesEnumerable())
+	{
+		for (int i = 1; i < 9; i++)
+			if(tile == 0 && !list.Contains(i)){
+				list.add(i);
+				tile = i; 
+				break; 
+			}
 	}	
 
 }
