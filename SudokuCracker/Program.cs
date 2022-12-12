@@ -10,14 +10,10 @@ class Program
         Console.WriteLine("Hello, silas");
         LoadSudokus();
 
-        foreach (var sudoku in _sudokus)
-        {
-            Console.WriteLine(sudoku);
-            Console.WriteLine();
-        }
+        Console.WriteLine(_sudokus[0]);
         
         int h = _sudokus[0].CalculateHeuristicValue();
-        int newH = _sudokus[0].Swap(0, 0, 1, 1, h);
+        int newH = _sudokus[0].Swap(0, 0, 0, 2, h);
         Console.WriteLine(_sudokus[0]);
         Console.WriteLine("\n" + newH);
     }

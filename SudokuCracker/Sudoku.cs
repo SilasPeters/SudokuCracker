@@ -17,7 +17,7 @@ public class Sudoku
 			for (var by = 0; by < 3; by++) for (var bx = 0; bx < 3; bx++)
 			{
 				var tileValue = numbers[(x + bx) + (y + by) * 9];
-				tiles[bx, by] = new Tile(tileValue, tileValue == 0);
+				tiles[bx, by] = new Tile(tileValue, tileValue != 0);
 			}
 			
 			_blocks[blockX, blockY] = new Block(tiles);
@@ -39,12 +39,12 @@ public class Sudoku
 	private static int _CalculateHeuristicValueOfEnumerable(IEnumerable<Tile> tiles)
 	{
 		var h     = 0;
-		var found = new List<Tile>(9);
+		var found = new List<byte>(9);
 		
 		foreach (var tile in tiles)
 		{
-			if (found.Contains(tile)) h += 1;
-			else found.Add(tile);
+			if (found.Contains(tile.Value)) h += 1;
+			else found.Add(tile.Value);
 		}
 
 		return h;
@@ -54,7 +54,7 @@ public class Sudoku
 	/// <remarks>Assumes that both points, a and b, belong to the same block</remarks>
 	public int Swap(byte ax, byte ay, byte bx, byte by, int currentHeuristicValue)
 	{
-		var oldH = calculateHeuristicValues();
+		var oldH = calculateHeuristicValues(); // Can be way faster: just look if a duplicate is replaced by a unique, or reversed
 
 		var (block, offset) = GetBlockContaining(ax, ay);
 		block.Swap(ax - offset, // Assumes that both points are within the same block

@@ -10,6 +10,7 @@ public struct Block
 	public Block(Tile[,] values)
 	{
 		_tiles = values;
+		_Fill();
 	}
 
 	public void Swap(int ax, int ay, int bx, int by)
