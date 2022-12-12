@@ -43,6 +43,35 @@ public struct Block
 		for (var x = 0; x < 3; x++)
 			yield return _tiles[x, y];
 	}
+	
+	public IEnumerable<Tile> GetAllTilesEnumerable ()
+	{
+		for (var y = 0; y < 3; y++)
+			for (var x = 0; x < 3; x++)
+				yield return _tiles[x,y];
+	}
+
+	private void _Fill()
+	{
+		var presentNumbers = (
+			from tile in GetAllTilesEnumerable()
+			where tile.Value is not 0
+			select tile.Value
+		).Distinct().ToList();
+
+		foreach (var tile in GetAllTilesEnumerable())
+		{
+			if (tile.Value != 0) continue;
+			
+			for (byte i = 1; i <= 9; i++) // TODO: in stead of looping all posibillities, remember where you left off
+				if (!presentNumbers.Contains(i))
+				{
+					tile.Value = i;
+					presentNumbers.Add(i);
+					break; 
+				}
+		}
+	}
 
 	public override string ToString() // For debugging purposes
 	{

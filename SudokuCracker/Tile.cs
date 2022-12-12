@@ -2,7 +2,7 @@
 
 namespace SudokuCracker;
 [DebuggerDisplay("{Value}, fixed: {IsFixed}")]
-public struct Tile
+public class Tile
 {
 	public Tile(byte value, bool isFixed)
 	{
