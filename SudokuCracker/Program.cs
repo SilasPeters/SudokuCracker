@@ -27,6 +27,6 @@ class Program
 
         for (var i = 0; i < sudokuCount; i++)
             _sudokus[i] = new Sudoku(lines[1 + i * 2].Split(' ').Skip(1).Select(byte.Parse).ToArray());
-                                                    //^^ Compensates for that every line starts with ' '
+                                                                //^^ Compensates for that every line starts with ' '
     }
 }
