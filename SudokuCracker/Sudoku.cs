@@ -50,40 +50,32 @@ public class Sudoku
 		return h;
 	}
 	
-	/// <returns>New heuristic value after swapping</returns>
+	/// <returns>New heuristic value after swapping, does not actually swap</returns>
 	/// <remarks>Assumes that both points, a and b, belong to the same block</remarks>
-	public int Swap(byte ax, byte ay, byte bx, byte by, int currentHeuristicValue)
+	public int Swaph(int ax, int ay, int bx, int by, int ch)
 	{
-		var oldH = calculateHeuristicValues(); // Can be way faster: just look if a duplicate is replaced by a unique, or reversed
-
+		Swap(ax, ay, bx, by);
+		var newH = CalculateHeuristicValue();
+		Swap(ax, ay, bx, by);
+		return newH;
+	}
+	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block
+	public void Swap(int ax, int ay, int bx, int by){
 		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
 		block.Swap(ax - xOffset, // Assumes that both points are within the same block
 			       ay - yOffset,
 			       bx - xOffset,
 			       by - yOffset);
-
-		var newH = calculateHeuristicValues();
-		return currentHeuristicValue + (oldH - newH);
-
-		
-		// Supporting method
-		int calculateHeuristicValues()
-		{
-			var columnA = GetColumnEnumerable(ax);
-			var rowA    = GetRowEnumerable(ay);
-			var columnB = GetColumnEnumerable(ax);
-			var rowB    = GetRowEnumerable(ay);
-			
-			return _CalculateHeuristicValueOfEnumerable(columnA) +
-			       _CalculateHeuristicValueOfEnumerable(rowA) +
-			       _CalculateHeuristicValueOfEnumerable(columnB) +
-			       _CalculateHeuristicValueOfEnumerable(rowB);
-		}
+	}
+	/// <returns> Returns whether the tile at (x,y) is a fixed tile
+	public bool isFixed(int x, int y){
+		var (block, xOffset, yOffset) = GetBlockContaining(x, y);
+		return block.isFixed(x % 3, y % 3);
 	}
 
 	/// <returns>Returns the block containing (x,y), and the offset of that block</returns>
 	public (Block, int, int) GetBlockContaining(int x, int y) =>
-		(_blocks[x/3, y/3], x/3 * 3, y/3 * 3);
+		(_blocks[x/3, y/3], x/3 * 3, y/3 * 3); 
 
 	private IEnumerable<Tile> GetColumnEnumerable(int x)
 	{

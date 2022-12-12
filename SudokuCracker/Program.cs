@@ -7,14 +7,14 @@ class Program
 
     static void Main()
     {
-        Console.WriteLine("Hello, silas");
         LoadSudokus();
 
         Console.WriteLine(_sudokus[0]);
         int h = _sudokus[0].CalculateHeuristicValue();
         Console.WriteLine("h: " + h + "\n");
-        int newH = _sudokus[0].Swap(0, 0, 0, 2, h);
-        Console.WriteLine(_sudokus[0]);
+        Sudoku output = ILS.Step(_sudokus[0]);
+        int newH = output.CalculateHeuristicValue();
+        Console.WriteLine(output);
         Console.WriteLine("new h: " + newH + "\n");
     }
 
