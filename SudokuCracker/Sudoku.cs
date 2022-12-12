@@ -7,6 +7,7 @@ public class Sudoku
 {
 	public Sudoku (IReadOnlyList<byte> numbers)
 	{
+		// Converts list of numbers to blocks
 		for (var blockY = 0; blockY < 3; blockY++) for (var blockX = 0; blockX < 3; blockX++)
 		{
 			int x = 3 * blockX,
@@ -26,31 +27,63 @@ public class Sudoku
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 	private readonly Block[,] _blocks = new Block[3, 3];
 
-	public int CalculateHeuristic()
+	public int CalculateHeuristicValue()
 	{
-		var h = 0;
-		for (var y = 0; y < 9; y++)
-		{
-			var found = new List<Tile>(9);
-			foreach (var tile in GetRowEnumerable(y))
-			{
-				if (found.Contains(tile)) h += 1;
-				else found[y]               =  tile;
-			}
-		}
-
-		for (var x = 0; x < 9; x++)
-		{
-			var found = new List<Tile>(9);
-			foreach (var tile in GetColumnEnumerable(x))
-			{
-				if (found.Contains(tile)) h += 1;
-				else found[x]               =  tile;
-			}
-		}	
+		var h                         = 0;
+		for (var y = 0; y < 9; y++) h += _CalculateHeuristicValueOfEnumerable(GetRowEnumerable(y));
+		for (var x = 0; x < 9; x++) h += _CalculateHeuristicValueOfEnumerable(GetColumnEnumerable(x));
 
 		return h;
 	}
+
+	private static int _CalculateHeuristicValueOfEnumerable(IEnumerable<Tile> tiles)
+	{
+		var h     = 0;
+		var found = new List<Tile>(9);
+		
+		foreach (var tile in tiles)
+		{
+			if (found.Contains(tile)) h += 1;
+			else found.Add(tile);
+		}
+
+		return h;
+	}
+	
+	/// <returns>New heuristic value after swapping</returns>
+	/// <remarks>Assumes that both points, a and b, belong to the same block</remarks>
+	public int Swap(byte ax, byte ay, byte bx, byte by, int currentHeuristicValue)
+	{
+		var oldH = calculateHeuristicValues();
+
+		var (block, offset) = GetBlockContaining(ax, ay);
+		block.Swap(ax - offset, // Assumes that both points are within the same block
+			       ay - offset,
+			       bx - offset,
+			       by - offset);
+
+		var newH = calculateHeuristicValues();
+		return currentHeuristicValue + (oldH - newH);
+
+		
+		// Supporting method
+		int calculateHeuristicValues()
+		{
+			var columnA = GetColumnEnumerable(ax);
+			var rowA    = GetRowEnumerable(ay);
+			var columnB = GetColumnEnumerable(ax);
+			var rowB    = GetRowEnumerable(ay);
+			
+			return _CalculateHeuristicValueOfEnumerable(columnA) +
+			       _CalculateHeuristicValueOfEnumerable(rowA) +
+			       _CalculateHeuristicValueOfEnumerable(columnB) +
+			       _CalculateHeuristicValueOfEnumerable(rowB);
+		}
+	}
+
+	/// <returns>Returns the block containing (x,y), and the offset of that block</returns>
+	public (Block, int) GetBlockContaining(int x, int y) =>
+		(_blocks[x/3, y/3], x/3 * 3);
 
 	private IEnumerable<Tile> GetColumnEnumerable(int x)
 	{
@@ -101,80 +134,4 @@ public class Sudoku
 		
 		return sb.ToString();
 	}
-}
-
-public struct Block
-{
-	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-	private readonly Tile[,] _tiles = new Tile[3, 3];
-
-	public Block(Tile[,] values)
-	{
-		_tiles = values;
-	}
-
-	public void Swap(byte ax, byte ay, byte bx, byte by) // TODO: Maybe define this as a 0 - 8 range index?
-	{
-		(_tiles[ax, ay], _tiles[bx, by]) = (_tiles[bx, by], _tiles[ax, ay]);
-	}
-
-	/// <returns>New heuristic value after swapping</returns>
-	public int SwapHeuristic(byte ax, byte ay, byte bx, byte by, int h)
-	{
-		int hNew;
-		throw new NotImplementedException();
-	}
-
-	public bool IsValid()
-	{
-		var count = 0;
-		for (var y = 0; y < 3; y++) for (var x = 0; x < 3; x++) // For every tile
-			count += _tiles[x, y].Value;
-		return count == 45; // TODO: This is too naive, and won't always work
-	}
-
-	public IEnumerable<Tile> GetColumnEnumerable(int x)
-	{
-		for (var y = 0; y < 3; y++)
-			yield return _tiles[x, y];
-	}
-	public IEnumerable<Tile> GetRowEnumerable(int y)
-	{
-		for (var x = 0; x < 3; x++)
-			yield return _tiles[x, y];
-	}
-
-	public override string ToString() // For debugging purposes
-	{
-		StringBuilder sb = new();
-		for (int i = 0; i < 3; i++)
-		{
-			sb.Append(", ");
-			
-			foreach (var tile in GetRowEnumerable(i))
-				sb.Append($" {tile.ToString()}");
-		}
-
-		return sb.Remove(0, 2).ToString();
-	}
-}
-
-[DebuggerDisplay("{Value}, fixed: {IsFixed}")]
-public struct Tile
-{
-	public Tile(byte value, bool isFixed)
-	{
-		Value   = value;
-		IsFixed = isFixed;
-	}
-
-	public byte Value   { get; set; }
-	public bool IsFixed { get; set; }
-	
-	public void Deconstruct(out byte Value)
-	{
-		Value = this.Value;
-	}
-
-	public override string ToString() => Value > 0 ? Value.ToString() : "-";
 }

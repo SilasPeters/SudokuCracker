@@ -15,6 +15,11 @@ class Program
             Console.WriteLine(sudoku);
             Console.WriteLine();
         }
+        
+        int h = _sudokus[0].CalculateHeuristicValue();
+        int newH = _sudokus[0].Swap(0, 0, 1, 1, h);
+        Console.WriteLine(_sudokus[0]);
+        Console.WriteLine("\n" + newH);
     }
 
     static void LoadSudokus()
