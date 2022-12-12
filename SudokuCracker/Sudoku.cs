@@ -56,11 +56,11 @@ public class Sudoku
 	{
 		var oldH = calculateHeuristicValues(); // Can be way faster: just look if a duplicate is replaced by a unique, or reversed
 
-		var (block, offset) = GetBlockContaining(ax, ay);
-		block.Swap(ax - offset, // Assumes that both points are within the same block
-			       ay - offset,
-			       bx - offset,
-			       by - offset);
+		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
+		block.Swap(ax - xOffset, // Assumes that both points are within the same block
+			       ay - yOffset,
+			       bx - xOffset,
+			       by - yOffset);
 
 		var newH = calculateHeuristicValues();
 		return currentHeuristicValue + (oldH - newH);
@@ -82,8 +82,8 @@ public class Sudoku
 	}
 
 	/// <returns>Returns the block containing (x,y), and the offset of that block</returns>
-	public (Block, int) GetBlockContaining(int x, int y) =>
-		(_blocks[x/3, y/3], x/3 * 3);
+	public (Block, int, int) GetBlockContaining(int x, int y) =>
+		(_blocks[x/3, y/3], x/3 * 3, y/3 * 3);
 
 	private IEnumerable<Tile> GetColumnEnumerable(int x)
 	{
