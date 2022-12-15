@@ -34,10 +34,10 @@ public struct Block
 		return count == 45; // TODO: This is too naive, and won't always work
 	}
 
-	/// <returns> Returns whether the tile at (x,y) is a fixed tile
-	public bool isFixed(int x, int y){
-		if (x > 8 || y > 8 || x < 0 || y < 0){
-			throw new Exception("(" + x + "," + y + ") isn't a valid tile!\n");
+	/// <returns> Returns whether the tile at (x,y) is a fixed tile</returns>
+	public bool IsFixed(int x, int y) {
+		if (x > 2 || y > 2 || x < 0 || y < 0){
+			throw new Exception($"({x}, {y}) isn't a valid tile!\n");
 		}
 		return _tiles[x,y].IsFixed;
 	}

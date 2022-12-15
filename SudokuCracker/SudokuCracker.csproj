@@ -8,8 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="..\Sudoku_puzzels_5.txt">
-        <Link>Sudoku_puzzels_5.txt</Link>
+      <None Update="Sudoku_puzzels_5.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

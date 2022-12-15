@@ -50,8 +50,8 @@ public class Sudoku
 		return h;
 	}
 	
-	/// <returns>New heuristic value after swapping, does not actually swap</returns>
-	/// <remarks>Assumes that both points, a and b, belong to the same block</remarks>
+	/// <summary>Determines the new heuristic value after swapping. Reverts swap after testing.</summary>
+	/// <remarks>Assumes that both points, a and b, belong to the same block.</remarks>
 	public int Swaph(int ax, int ay, int bx, int by, int ch)
 	{
 		Swap(ax, ay, bx, by);
@@ -59,18 +59,19 @@ public class Sudoku
 		Swap(ax, ay, bx, by);
 		return newH;
 	}
-	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block
-	public void Swap(int ax, int ay, int bx, int by){
+	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block</remarks>
+	public void Swap(int ax, int ay, int bx, int by) {
 		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
 		block.Swap(ax - xOffset, // Assumes that both points are within the same block
 			       ay - yOffset,
 			       bx - xOffset,
 			       by - yOffset);
 	}
-	/// <returns> Returns whether the tile at (x,y) is a fixed tile
-	public bool isFixed(int x, int y){
-		var (block, xOffset, yOffset) = GetBlockContaining(x, y);
-		return block.isFixed(x % 3, y % 3);
+	
+	/// <returns> Returns whether the tile at (x,y) is a fixed tile</returns>
+	public bool IsFixed(int x, int y) {
+		var (block, _, _) = GetBlockContaining(x, y);
+		return block.IsFixed(x % 3, y % 3);
 	}
 
 	/// <returns>Returns the block containing (x,y), and the offset of that block</returns>

@@ -15,9 +15,9 @@ static class ILS{ // ILS -> Iterated Local Search
         // 2. probeer alle swaps (tenzij je een fixed tile tegenkomt)
         List<(int, int, int, int, int)> swaps = new List<(int, int, int, int, int)>{}; //heuristic, x,y, xs,xy
         for (int y = ylow; y < ylow+3; y++) for (int x = xlow; x < xlow+3; x++){ 
-            if (!s.isFixed(x,y)){
+            if (!s.IsFixed(x,y)){
                 for (int ys = ylow; ys < ylow+3; ys++) for (int xs = xlow; xs < xlow+3; xs++){ 
-                    if (!s.isFixed(xs, ys)){
+                    if (!s.IsFixed(xs, ys)){
                         int newh = s.Swaph(x, y, xs, ys, h);
                         swaps.Add((newh, x, y, xs, ys));
                     }
@@ -26,7 +26,7 @@ static class ILS{ // ILS -> Iterated Local Search
         }
         // 3. kies de beste indien die een verbetering opleverd
         (int bh, int bx, int by, int bxs, int bys) best = swaps.OrderByDescending(x => x.Item1).Last(); //sort and grab first one
-        Console.WriteLine("best: " + best.bh + ", (" + best.bx + "," + best.by + ")" + " -> (" + best.bxs + "," + best.bys + ")");
+        Console.WriteLine($"Best: ({best.bh}, {best.bx}, {best.by}) -> ({best.bxs}, {best.bys})");
         if (best.bh < h){
             s.Swap(best.bx, best.by, best.bxs, best.bys);
             return s;
