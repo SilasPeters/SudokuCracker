@@ -39,12 +39,12 @@ public class Sudoku
 	private static int _CalculateHeuristicValueOfEnumerable(IEnumerable<Tile> tiles)
 	{
 		var h     = 0;
-		var found = new List<byte>(9);
+		var found = new bool[10];
 		
 		foreach (var tile in tiles)
 		{
-			if (found.Contains(tile.Value)) h += 1;
-			else found.Add(tile.Value);
+			if (found[tile.Value]) h += 1;
+			else found[tile.Value] = true;
 		}
 
 		return h;
