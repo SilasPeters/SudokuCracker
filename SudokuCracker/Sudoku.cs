@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using System.Text;
 
 namespace SudokuCracker;
@@ -50,22 +51,53 @@ public class Sudoku
 		return h;
 	}
 	
-	/// <summary>Determines the new heuristic value after swapping. Reverts swap after testing.</summary>
+	/// <summary>Determines the new heuristic value after a potential swap</summary>
 	/// <remarks>Assumes that both points, a and b, belong to the same block.</remarks>
-	public int Swaph(int ax, int ay, int bx, int by, int ch)
+	public int DetermineHeuristicChangeAfterSwap(int ax, int ay, int bx, int by, int currentH)
 	{
-		Swap(ax, ay, bx, by);
-		var newH = CalculateHeuristicValue();
-		Swap(ax, ay, bx, by);
-		return newH;
+		// Gather relevant data
+		var columnA = GetColumnEnumerable(ax).ToList();
+		var rowA    = GetRowEnumerable(ay)	 .ToList();
+		var columnB = GetColumnEnumerable(bx).ToList();
+		var rowB    = GetRowEnumerable(by)	 .ToList();
+
+		var oldA = columnA[ay];
+		var oldB = columnB[by];
+		
+		// Prepare data: remove the value to be swapped
+		columnA.RemoveAt(ay);
+		rowA.	RemoveAt(ax);
+		columnB.RemoveAt(by);
+		rowB.	RemoveAt(bx);
+
+		return currentH
+		     + getHeuristicChangeOf(columnA, oldA, oldB)
+		     + getHeuristicChangeOf(rowA,    oldA, oldB)
+		     + getHeuristicChangeOf(columnB, oldB, oldA)
+		     + getHeuristicChangeOf(rowB,    oldB, oldA);
+		
+		int getHeuristicChangeOf(IEnumerable<Tile> enumerable, Tile old, Tile swapped)
+		{
+			bool oldValueWasDuplicate = enumerable.Contains(old,     Tile.ValueComparer);
+			bool newValueIsDuplicate  = enumerable.Contains(swapped, Tile.ValueComparer);
+
+			if (oldValueWasDuplicate)
+			{
+				return newValueIsDuplicate ? 0 : -1;
+			}
+			else
+			{
+				return newValueIsDuplicate ? 1 : 0;
+			}
+		}
 	}
 	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block</remarks>
 	public void Swap(int ax, int ay, int bx, int by) {
 		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
 		block.Swap(ax - xOffset, // Assumes that both points are within the same block
-			       ay - yOffset,
-			       bx - xOffset,
-			       by - yOffset);
+			ay - yOffset,
+			bx - xOffset,
+			by - yOffset);
 	}
 	
 	/// <returns> Returns whether the tile at (x,y) is a fixed tile</returns>

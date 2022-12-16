@@ -18,7 +18,7 @@ static class ILS{ // ILS -> Iterated Local Search
             if (!s.IsFixed(x,y)){
                 for (int ys = ylow; ys < ylow+3; ys++) for (int xs = xlow; xs < xlow+3; xs++){ 
                     if (!s.IsFixed(xs, ys)){
-                        int newh = s.Swaph(x, y, xs, ys, h);
+                        int newh = s.DetermineHeuristicChangeAfterSwap(x, y, xs, ys, h);
                         swaps.Add((newh, x, y, xs, ys));
                     }
                 }

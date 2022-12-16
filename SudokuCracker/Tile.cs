@@ -10,6 +10,21 @@ public class Tile
 		IsFixed = isFixed;
 	}
 
+	private sealed class ValueEqualityComparer : IEqualityComparer<Tile>
+	{
+		public bool Equals(Tile x, Tile y)
+		{
+			return x.Value == y.Value;
+		}
+
+		public int GetHashCode(Tile obj)
+		{
+			return obj.Value.GetHashCode();
+		}
+	}
+
+	public static IEqualityComparer<Tile> ValueComparer { get; } = new ValueEqualityComparer();
+
 	public byte Value   { get; set; }
 	public bool IsFixed { get; set; }
 	
