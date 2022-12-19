@@ -9,11 +9,12 @@ class Program
     {
         LoadSudokus();
 
-        Console.WriteLine(_sudokus[1]);
-        int h = _sudokus[1].CalculateHeuristicValue();
+        Console.WriteLine(_sudokus[0]);
+        int h = _sudokus[0].CalculateHeuristicValue();
         Console.WriteLine("h: " + h + "\n");
-        Sudoku output = ILS.search(_sudokus[1], 8);
+        Sudoku output = ILS.search(_sudokus[0], 8);
         int newH = output.CalculateHeuristicValue();
+        Console.Clear();
         Console.WriteLine(output);
         Console.WriteLine("new h: " + newH + "\n");
     }
