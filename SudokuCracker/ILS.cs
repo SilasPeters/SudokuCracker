@@ -13,7 +13,7 @@ static class ILS{ // ILS -> Iterated Local Search
                 ++platCount;
                 if(platCount > 9){//je zit echt op een plateau:
                     // Console.WriteLine("we've hit a plateau; stepping "+ platStepNum +"  times, currenth: " + current.Item2);
-                    //Console.Clear();
+                    Console.Clear();
                     Console.Write(current.Item2);
                     for (int i = 0; i < platStepNum; i++) {
                         current = Step(current.Item1, true);  //ff stappen
