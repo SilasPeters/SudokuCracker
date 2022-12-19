@@ -5,9 +5,21 @@ static class ILS{ // ILS -> Iterated Local Search
         int currenth = s.CalculateHeuristicValue();
         (Sudoku, int)current = (s, s.CalculateHeuristicValue()); //stored as (sudoku, heuristic value)
         (Sudoku, int)next = Step(s); 
+        int platCount = 0;
+        int platStepNum = 5;
 
         //voer "Step" uit todat je een locale optima vind
-        while(next.Item2 < current.Item2){    //als de volgende stap beter is
+        while(next.Item2 <= current.Item2 ){    //als de volgende stap beter is
+            if (next.Item2 == current.Item2) {
+                if(platCount > 9)
+                    for (int i = 0; i < platStepNum; i++)
+                    {
+                        current = Step(current.Item1); 
+                    }
+                platCount++;
+            }
+            else
+                platCount = 0;
             current = next;
             next = Step(s); 
         } 
