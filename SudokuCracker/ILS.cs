@@ -2,10 +2,18 @@ namespace SudokuCracker;
 
 static class ILS{ // ILS -> Iterated Local Search
     public static Sudoku search(Sudoku s){
+        int currenth = s.CalculateHeuristicValue();
+        (Sudoku, int)current = (s, s.CalculateHeuristicValue()); //stored as (sudoku, heuristic value)
+        (Sudoku, int)next = Step(s); 
+
         //voer "Step" uit todat je een locale optima vind
-        return s;
+        while(next.Item2 < current.Item2){    //als de volgende stap beter is
+            current = next;
+            next = Step(s); 
+        } 
+        return current.Item1;
     }
-    public static Sudoku Step(Sudoku s){ 
+    private static (Sudoku, int) Step(Sudoku s){ 
         // 1. kies willekeurig 1 van de 9 blokken
         int h = s.CalculateHeuristicValue();
         Random rnd = new Random();
@@ -29,8 +37,8 @@ static class ILS{ // ILS -> Iterated Local Search
         Console.WriteLine($"Best: ({best.bh}, {best.bx}, {best.by}) -> ({best.bxs}, {best.bys})");
         if (best.bh < h){
             s.Swap(best.bx, best.by, best.bxs, best.bys);
-            return s;
+            return (s, best.bh);
         }
-        return s;
+        return (s, h);
     }
 }
