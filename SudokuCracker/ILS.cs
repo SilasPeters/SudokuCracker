@@ -8,19 +8,20 @@ static class ILS{ // ILS -> Iterated Local Search
         int platCount = 0;
 
         //voer "Step" uit todat je een locale optima vind
-        while(current.Item2 > 26){  //ga door tot je deze heuristische waarde vind 
+        while(current.Item2 > 0){  //ga door tot je deze heuristische waarde vind 
             if (next.Item2 == current.Item2) { //deze stap is evengoed als de laatste
                 ++platCount;
                 if(platCount > 9){//je zit echt op een plateau:
-                    // Console.WriteLine("we've hit a plateau; stepping "+ platStepNum +"  times, currenth: " + current.Item2);
-                    Console.Clear();
-                    Console.Write(current.Item2);
+                    Console.WriteLine("we've hit a plateau; stepping "+ platStepNum +"  times, currenth: " + current.Item2);
+                    //Console.Clear();
                     for (int i = 0; i < platStepNum; i++) {
                         current = Step(current.Item1, true);  //ff stappen
                     }
                     platCount = 0;
                 } 
-            } else{  //deze stap is beter dan de laatste
+                else Console.WriteLine("no plat " + current.Item2);
+            } 
+            else{  //deze stap is beter dan de laatste
                 platCount = 0;
             }
             current = next;
@@ -52,9 +53,14 @@ static class ILS{ // ILS -> Iterated Local Search
                 }
             } 
         }
+        System.Console.WriteLine("best " + best);
         // 3. kies de beste indien die een verbetering opleverd
         //als we in forced modus zitten, dan pakken we gewoon de random swap. tenzij die toevallig niks is.
-        if (!forced || best == (0,0,0,0,0)) 
+        if (swaps.Count() == 0){
+            return (s, h);
+        }
+
+        if (!forced || best == (0,0,0,0,0))
             best = swaps.OrderByDescending(x => x.Item1).Last(); //sorteer op heuristische waarde en pak eerste
         // Console.WriteLine($"Best: ({best.bh}, {best.bx}, {best.by}) -> ({best.bxs}, {best.bys})");
         if (best.bh < h || forced){
