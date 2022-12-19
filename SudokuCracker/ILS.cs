@@ -8,12 +8,12 @@ static class ILS{ // ILS -> Iterated Local Search
         int platCount = 0;
 
         //voer "Step" uit todat je een locale optima vind
-        while(current.Item2 > 32){  //ga door tot je deze heuristische waarde vind 
+        while(current.Item2 > 26){  //ga door tot je deze heuristische waarde vind 
             if (next.Item2 == current.Item2) { //deze stap is evengoed als de laatste
                 ++platCount;
                 if(platCount > 9){//je zit echt op een plateau:
                     // Console.WriteLine("we've hit a plateau; stepping "+ platStepNum +"  times, currenth: " + current.Item2);
-                    Console.Clear();
+                    //Console.Clear();
                     Console.Write(current.Item2);
                     for (int i = 0; i < platStepNum; i++) {
                         current = Step(current.Item1, true);  //ff stappen
