@@ -12,7 +12,7 @@ class Program
         Console.WriteLine(_sudokus[1]);
         int h = _sudokus[1].CalculateHeuristicValue();
         Console.WriteLine("h: " + h + "\n");
-        Sudoku output = ILS.search(_sudokus[1]);
+        Sudoku output = ILS.search(_sudokus[1], 8);
         int newH = output.CalculateHeuristicValue();
         Console.WriteLine(output);
         Console.WriteLine("new h: " + newH + "\n");

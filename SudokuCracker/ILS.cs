@@ -1,12 +1,11 @@
 namespace SudokuCracker;
 
 static class ILS{ // ILS -> Iterated Local Search
-    public static Sudoku search(Sudoku s){
+    public static Sudoku search(Sudoku s, int platStepNum = 5){
         int currenth = s.CalculateHeuristicValue();
         (Sudoku, int)current = (s, s.CalculateHeuristicValue()); //stored as (sudoku, heuristic value)
         (Sudoku, int)next = Step(s, false); 
         int platCount = 0;
-        int platStepNum = 8;
 
         //voer "Step" uit todat je een locale optima vind
         while(current.Item2 > 27){  //ga door tot je deze heuristische waarde vind 
