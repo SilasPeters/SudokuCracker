@@ -8,11 +8,11 @@ class Program
     static void Main()
     {
         LoadSudokus();
-        var index = 0;
+        var index = 2;
         Console.WriteLine(_sudokus[index]);
         int h = _sudokus[index].CalculateHeuristicValue();
         Console.WriteLine("h: " + h + "\n");
-        Sudoku output = ILS.search(_sudokus[index], 7);
+        Sudoku output = ILS.search(_sudokus[index], 50);
         int newH = output.CalculateHeuristicValue();
         //Console.Clear();
         Console.WriteLine(output);
