@@ -5,7 +5,7 @@ namespace SudokuCracker;
 public struct Block
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-	private readonly Tile[,] _tiles = new Tile[3, 3];
+	public readonly Tile[,] _tiles = new Tile[3, 3];
 
 	public Block(Tile[,] values)
 	{

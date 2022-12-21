@@ -26,7 +26,7 @@ public class Sudoku
 	}
 
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-	private readonly Block[,] _blocks = new Block[3, 3];
+	public readonly Block[,] _blocks = new Block[3, 3];
 
 	public int CalculateHeuristicValue()
 	{
