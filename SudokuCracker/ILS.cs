@@ -7,7 +7,7 @@ static class ILS{ // ILS -> Iterated Local Search
         (Sudoku, int)next; 
         int platCount = 0;
         while (current.Item2 > 0){ //stopconditie (h == 0)
-            next = Step(current.Item1, currentH);
+            next = Step(current.Item1, current.Item2);
             Console.WriteLine($"step: {current.Item2} -> {next.Item2}");
             if (current.Item2 == next.Item2){ //klein plateau
                 ++platCount;
