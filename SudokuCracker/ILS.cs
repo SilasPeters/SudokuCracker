@@ -5,30 +5,29 @@ static class ILS{ // ILS -> Iterated Local Search
         int kaas = 1000;
 
         int currentH = s.CalculateHeuristicValue();
-        (Sudoku, int)current = (s, currentH); //stored as (sudoku, heuristic value)
-        (Sudoku, int)next; 
+        int previousH;
         int platCount = 0;
-        while (current.Item2 > 0){ //stopconditie (h == 0)
-            next = Step(current.Item1, current.Item2);
-            if (current.Item2 == next.Item2){ //klein plateau
+        while (currentH > 0){ //stopconditie (h == 0)
+            previousH = currentH;
+            s = Step(s, currentH);
+            currentH = s.CalculateHeuristicValue();
+            if (currentH == previousH){ //klein plateau
                 ++platCount;
                 if (platCount >= 10){  //groot (genoeg) plateau
                     for (int i = 0; i < platStepNum; i++){
-                        current = next;
-                        next = plateauStep(current.Item1); //S keer willekeurig swappen
-                    }
-                    platCount = 0;
+                        s = plateauStep(s); //S keer willekeurig swappen
+                        currentH = s.CalculateHeuristicValue();
+                    } platCount = 0;
                 }
             } else platCount = 0; //geen plateau (meer)
-            current = next; //daadwerkelijk de stap uitvoeren
-            if (current.Item2 < kaas){
-                kaas = current.Item2;
+            if (currentH < kaas){
+                kaas = currentH;
                 Console.WriteLine(kaas);
             }
         }
-        return current.Item1;
+        return s;
     }
-    private static (Sudoku, int) plateauStep(Sudoku s){ //willekeurige swaps om uit een plateau te ontsnappen
+    private static Sudoku plateauStep(Sudoku s){ //willekeurige swaps om uit een plateau te ontsnappen
         Random rnd = new Random();
         int xlow = 3* rnd.Next(0,3); //x lowerbound van random block
         int ylow = 3* rnd.Next(0,3); //y lowerbound van random block
@@ -38,10 +37,9 @@ static class ILS{ // ILS -> Iterated Local Search
             return plateauStep(s); //nog ene keer
         }
         s.Swap(x, y, xs, ys);
-        int h = s.CalculateHeuristicValue();
-        return (s, h);
+        return s;
     }
-    private static (Sudoku, int) Step(Sudoku s, int oldH){
+    private static Sudoku Step(Sudoku s, int oldH){
         // 1. kies willekeurig 1 van de 9 blokken
         Random rnd = new Random();
         int xlow = 3* rnd.Next(0,3); //x lowerbound van random block
@@ -72,6 +70,6 @@ static class ILS{ // ILS -> Iterated Local Search
         if (best.bh < oldH) {
             s.Swap(best.bx, best.by, best.bxs, best.bys);
         }
-        return (s, best.bh); //als de beste swap beter is swap je. 
+        return s; //als de beste swap beter is swap je. 
     }
 }
