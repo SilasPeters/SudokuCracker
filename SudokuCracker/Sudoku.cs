@@ -24,6 +24,7 @@ public class Sudoku
 			_blocks[blockX, blockY] = new Block(tiles);
 		}
 	}
+	
 
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 	public readonly Block[,] _blocks = new Block[3, 3];
