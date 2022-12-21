@@ -8,7 +8,7 @@ class Program
     static void Main()
     {
         LoadSudokus();
-        var index = 5;
+        var index = 0;
         Console.WriteLine(_sudokus[index]);
         int h = _sudokus[index].CalculateHeuristicValue();
         Console.WriteLine("h: " + h + "\n");
