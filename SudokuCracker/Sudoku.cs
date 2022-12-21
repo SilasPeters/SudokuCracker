@@ -23,10 +23,21 @@ public class Sudoku
 			
 			_blocks[blockX, blockY] = new Block(tiles);
 		}
+
+		H = CalculateHeuristicValue();
 	}
 
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 	private readonly Block[,] _blocks = new Block[3, 3];
+
+	public int H;
+
+	/// <param name="index">0-based index, maximum of 8</param>
+	public Block GetBlock(byte index) {
+		if (index > 8)
+			throw new ArgumentOutOfRangeException(nameof(index), "Should be 0 til 8");
+		return _blocks[index % 3, index / 3];
+	}
 
 	public int CalculateHeuristicValue()
 	{
@@ -92,12 +103,13 @@ public class Sudoku
 		}
 	}
 	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block</remarks>
-	public void Swap(int ax, int ay, int bx, int by) {
+	public void Swap(int ax, int ay, int bx, int by, int newH) {
 		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
 		block.Swap(ax - xOffset, // Assumes that both points are within the same block
 			ay - yOffset,
 			bx - xOffset,
 			by - yOffset);
+		H = newH;
 	}
 	
 	/// <returns> Returns whether the tile at (x,y) is a fixed tile</returns>
