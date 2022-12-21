@@ -2,8 +2,7 @@ namespace SudokuCracker;
 
 static class ILS{ // ILS -> Iterated Local Search
     public static Sudoku search(Sudoku s, int platStepNum){
-        int kaas = 1000;
-
+        int kaas = 1000; //debug
         int currentH = s.CalculateHeuristicValue();
         int previousH;
         int platCount = 0;
@@ -14,16 +13,14 @@ static class ILS{ // ILS -> Iterated Local Search
             if (currentH == previousH){ //klein plateau
                 ++platCount;
                 if (platCount >= 10){  //groot (genoeg) plateau
-                    for (int i = 0; i < platStepNum; i++){
+                    for (int i = 0; i < platStepNum; ++i){
                         s = plateauStep(s); //S keer willekeurig swappen
-                        currentH = s.CalculateHeuristicValue();
-                    } platCount = 0;
+                    } 
+                    platCount = 0;
+                    currentH = s.CalculateHeuristicValue();
                 }
             } else platCount = 0; //geen plateau (meer)
-            if (currentH < kaas){
-                kaas = currentH;
-                Console.WriteLine(kaas);
-            }
+            if (currentH < kaas){ kaas = currentH; Console.WriteLine(kaas); } //debug
         }
         return s;
     }
@@ -49,7 +46,7 @@ static class ILS{ // ILS -> Iterated Local Search
         for (int y = ylow; y < ylow+3; y++) for (int x = xlow; x < xlow+3; x++){ 
             if (!s.IsFixed(x,y)){
                 for (int ys = ylow; ys < ylow+3; ys++) for (int xs = xlow; xs < xlow+3; xs++){  //alle swaps bekijken
-                    if (!s.IsFixed(xs, ys) && !(y == ys && x == xs)){ //niet fixed en swap doet niet niks
+                    if (!s.IsFixed(xs, ys) && (x,y) != (xs,ys)){ //niet fixed en swap doet niet niks
                         int newH = s.DetermineHeuristicChangeAfterSwap(x, y, xs, ys, oldH);
                         if (newH < best.bh){
                             best = (newH, x, y, xs, ys);  //beste swap tot nu toe > best
@@ -59,15 +56,8 @@ static class ILS{ // ILS -> Iterated Local Search
             } 
         }
         // 3. kies de beste indien die een verbetering opleverd
-        // if (best.bx == -1) { //als we geen enkele mogelijke swap hebben
-        //     return Step(s, oldH); //probeer opnieuw voor een ander block
-        // } =====> Dit moet niet nodig zijn, misschien?
-
-        // string better = "";
-        // if (best.bh < oldH) better = "<<<<<<< ";
-        // Console.WriteLine($"Best: ({best.bx}, {best.by}) -> ({best.bxs}, {best.bys}), h change = {best.bh-oldH}" + better);
-
-        if (best.bh < oldH) {
+        // Console.WriteLine($"Best: ({best.bx}, {best.by}) -> ({best.bxs}, {best.bys}), h change = {best.bh-oldH}");
+        if (oldH > best.bh) {
             s.Swap(best.bx, best.by, best.bxs, best.bys);
         }
         return s; //als de beste swap beter is swap je. 
