@@ -30,8 +30,8 @@ static class ILS{ // ILS -> Iterated Local Search
         Random rnd = new Random();
         int xlow = 3* rnd.Next(0,2); //x lowerbound van random block
         int ylow = 3* rnd.Next(0,2); //y lowerbound van random block
-        (int x, int y) = (rnd.Next(0,2), rnd.Next(0,2));
-        (int xs, int ys) = (rnd.Next(0,2), rnd.Next(0,2));
+        (int x, int y) = (rnd.Next(0,2)+xlow, rnd.Next(0,2)+ylow);
+        (int xs, int ys) = (rnd.Next(0,2)+xlow, rnd.Next(0,2)+ylow);
         if ((x,y) == (xs, ys) || s.IsFixed(x,y) || s.IsFixed(xs,ys)){ //als de random swap niks doet of niet kan
             return plateauStep(s);
         }
