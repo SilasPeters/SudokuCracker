@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace SudokuCracker;
-public struct Block
+public class Block
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 	private readonly Tile[,] _tiles = new Tile[3, 3];

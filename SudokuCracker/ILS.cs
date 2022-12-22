@@ -27,7 +27,7 @@ static class ILS{ // ILS -> Iterated Local Search
     private static Sudoku plateauStep(ref Sudoku s) {
         // Get random block
         var randomBlockIndex = Random.Shared.Next(0, 9);
-        var randomBlock         = s.GetBlock((byte) randomBlockIndex);
+        var randomBlock      = s.GetBlock((byte) randomBlockIndex);
         // Get a non-fixed random tile pair to be swapped
         var randomTileIndex1 = Random.Shared.Next(0, 9);
         var randomTileIndex2 = Random.Shared.Next(0, 9);
