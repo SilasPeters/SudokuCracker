@@ -105,7 +105,8 @@ public class Sudoku
 	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block</remarks>
 	public void Swap(int ax, int ay, int bx, int by, int newH) {
 		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
-		block.Swap(ax - xOffset, // Assumes that both points are within the same block
+		block.Swap(
+			ax - xOffset, // Assumes that both points are within the same block
 			ay - yOffset,
 			bx - xOffset,
 			by - yOffset);
