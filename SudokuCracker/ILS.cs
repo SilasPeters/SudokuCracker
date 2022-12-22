@@ -6,13 +6,14 @@ static class ILS{ // ILS -> Iterated Local Search
         
         int platCount = 0;
         while (s.H > 0){      //stopconditie (h == 0)
-            if (step(ref s)){ //klein plateau
+            if (!step(ref s)){ //klein plateau
                 ++platCount;
                 if (platCount >= 10){ //groot (genoeg) plateau
                     for (int i = 0; i < platStepNum; i++){
                         plateauStep(ref s); //S keer willekeurig swappen
                     }
                     platCount = 0;
+                    s.H = s.CalculateHeuristicValue();
                 }
             } else platCount = 0; //geen plateau (meer)
             if (s.H < kaas) {
