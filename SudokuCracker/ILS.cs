@@ -2,23 +2,27 @@ namespace SudokuCracker;
 
 static class ILS{ // ILS -> Iterated Local Search
     public static Sudoku search(Sudoku s, int platStepNum) {
-        int kaas = 1000;
+        int lowestHYet = 1000;
         
         int platCount = 0;
         while (s.H > 0){      //stopconditie (h == 0)
             if (!step(ref s)){ //klein plateau
                 ++platCount;
                 if (platCount >= 10){ //groot (genoeg) plateau
-                    for (int i = 0; i < platStepNum; i++){
+                    for (var i = 0; i < platStepNum; i++){
                         plateauStep(ref s); //S keer willekeurig swappen
                     }
                     platCount = 0;
                     s.H = s.CalculateHeuristicValue();
+                        // plateuStep resets this, so we need to update it manually
                 }
             } else platCount = 0; //geen plateau (meer)
-            if (s.H < kaas) {
-                kaas = s.H;
-                Console.WriteLine(kaas);
+            
+            // Show progress, if made
+            if (s.H < lowestHYet) {
+                lowestHYet = s.H;
+                Console.WriteLine($"\nLowest heuristic value so far: {lowestHYet}");
+                Console.WriteLine(s);
             }
         }
 
