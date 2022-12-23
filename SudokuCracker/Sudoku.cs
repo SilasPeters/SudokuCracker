@@ -6,7 +6,7 @@ namespace SudokuCracker;
 
 public class Sudoku
 {
-	public Sudoku (IReadOnlyList<byte> numbers)
+	public Sudoku (IReadOnlyList<byte> numbers) //constructor for making a new sudoku
 	{
 		// Converts list of numbers to blocks
 		for (var blockY = 0; blockY < 3; blockY++) for (var blockX = 0; blockX < 3; blockX++)
@@ -28,7 +28,7 @@ public class Sudoku
 	}
 
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-	private readonly Block[,] _blocks = new Block[3, 3];
+	private readonly Block[,] _blocks = new Block[3, 3]; //a block is just a 3x3 array of tiles
 
 	public int H;
 
@@ -39,7 +39,7 @@ public class Sudoku
 		return _blocks[index % 3, index / 3];
 	}
 
-	public int CalculateHeuristicValue()
+	public int CalculateHeuristicValue() 
 	{
 		var h                         = 0;
 		for (var y = 0; y < 9; y++) h += _CalculateHeuristicValueOfEnumerable(GetRowEnumerable(y));
@@ -114,7 +114,7 @@ public class Sudoku
 	}
 	
 	/// <returns> Returns whether the tile at (x,y) is a fixed tile</returns>
-	public bool IsFixed(int x, int y) {
+	public bool IsFixed(int x, int y) { 
 		var (block, _, _) = GetBlockContaining(x, y);
 		return block.IsFixed(x % 3, y % 3);
 	}
@@ -142,7 +142,7 @@ public class Sudoku
 				yield return tile;
 	}
 
-	public override string ToString()
+	public override string ToString() //for debug purposes: show the sudoku with ASCII art
 	{
 		StringBuilder sb = new();
 		const int totalWidth = (9 * 2 - 1) + 4; // 9 numbers with spaces, minus the last space, plus 2 separating bars with 2 spaces

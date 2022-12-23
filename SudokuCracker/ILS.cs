@@ -2,7 +2,7 @@ namespace SudokuCracker;
 
 static class ILS{ // ILS -> Iterated Local Search
     public static Sudoku search(Sudoku s, int platStepNum) {
-        int kaas = 1000;
+        int bestH = 1000;
         
         int platCount = 0;
         while (s.H > 0){      //stopconditie (h == 0)
@@ -16,12 +16,11 @@ static class ILS{ // ILS -> Iterated Local Search
                     s.H = s.CalculateHeuristicValue();
                 }
             } else platCount = 0; //geen plateau (meer)
-            if (s.H < kaas) {
-                kaas = s.H;
-                Console.WriteLine(kaas);
+            if (s.H < bestH) {
+                bestH = s.H;
+                Console.WriteLine(bestH);
             }
         }
-
         return s;
     }
     /// <remarks>Resets the heuristic value of the sudoku to -1</remarks>

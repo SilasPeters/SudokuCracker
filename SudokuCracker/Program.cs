@@ -2,26 +2,26 @@
 
 class Program
 {
-    private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
+    //set path to sudoku puzzels
+    private const string SudokuTestsPath = "Sudoku_puzzels_5.txt"; 
     private static Sudoku[] _sudokus;
 
     static void Main()
     {
         LoadSudokus();
-        var index = 2;
+        var index = 2; //index of the sudoku to calculate ILS with
         Console.WriteLine(_sudokus[index]);
-        int h = _sudokus[index].CalculateHeuristicValue();
+        int h = _sudokus[index].CalculateHeuristicValue(); 
         Console.WriteLine("h: " + h + "\n");
-        Sudoku output = ILS.search(_sudokus[index], 10);
+        Sudoku output = ILS.search(_sudokus[index], 5); //actually running ILS
         int newH = output.CalculateHeuristicValue();
-        //Console.Clear();
         Console.WriteLine(output);
         Console.WriteLine("new h: " + newH + "\n");
     }
 
     static void LoadSudokus()
     {
-        var lines = File.ReadAllLines(SudokuTestsPath);
+        var lines = File.ReadAllLines(SudokuTestsPath); 
 
         var sudokuCount = lines.Length / 2;
         _sudokus = new Sudoku[sudokuCount];

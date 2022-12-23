@@ -4,13 +4,13 @@ namespace SudokuCracker;
 [DebuggerDisplay("{Value}, fixed: {IsFixed}")]
 public class Tile
 {
-	public Tile(byte value, bool isFixed)
+	public Tile(byte value, bool isFixed) //a tile is just a number, and may able or unable to be changed
 	{
 		Value   = value;
 		IsFixed = isFixed;
 	}
 
-	private sealed class ValueEqualityComparer : IEqualityComparer<Tile>
+	private sealed class ValueEqualityComparer : IEqualityComparer<Tile> //a faster way of comparing two tiles
 	{
 		public bool Equals(Tile x, Tile y)
 		{
@@ -28,7 +28,7 @@ public class Tile
 	public byte Value   { get; set; }
 	public bool IsFixed { get; set; }
 	
-	public void Deconstruct(out byte Value)
+	public void Deconstruct(out byte Value) //deconstructor for tiles
 	{
 		Value = this.Value;
 	}
