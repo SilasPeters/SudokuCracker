@@ -1,65 +1,105 @@
 namespace SudokuCracker;
 
 static class ILS{ // ILS -> Iterated Local Search
-    public static Sudoku search(Sudoku s, int platStepNum){
-        int kaas = 1000; //debug
-        int currentH = s.CalculateHeuristicValue();
-        int previousH;
+    public static Sudoku search(Sudoku s, int platStepNum) {
+        int kaas = 1000;
+        
         int platCount = 0;
-        while (currentH > 0){ //stopconditie (h == 0)
-            previousH = currentH;
-            s = Step(s, currentH);
-            currentH = s.CalculateHeuristicValue();
-            if (currentH == previousH){ //klein plateau
+        while (s.H > 0){      //stopconditie (h == 0)
+            if (!step(ref s)){ //klein plateau
                 ++platCount;
-                if (platCount >= 10){  //groot (genoeg) plateau
-                    for (int i = 0; i < platStepNum; ++i){
-                        s = plateauStep(s); //S keer willekeurig swappen
-                    } 
+                if (platCount >= 10){ //groot (genoeg) plateau
+                    for (int i = 0; i < platStepNum; i++){
+                        plateauStep(ref s); //S keer willekeurig swappen
+                    }
                     platCount = 0;
-                    currentH = s.CalculateHeuristicValue();
+                    s.H = s.CalculateHeuristicValue();
                 }
             } else platCount = 0; //geen plateau (meer)
-            if (currentH < kaas){ kaas = currentH; Console.WriteLine(kaas); } //debug
+            if (s.H < kaas) {
+                kaas = s.H;
+                Console.WriteLine(kaas);
+            }
         }
+
         return s;
     }
-    private static Sudoku plateauStep(Sudoku s){ //willekeurige swaps om uit een plateau te ontsnappen
-        Random rnd = new Random();
-        int xlow = 3* rnd.Next(0,3); //x lowerbound van random block
-        int ylow = 3* rnd.Next(0,3); //y lowerbound van random block
-        (int x, int y) = (rnd.Next(0,3)+xlow, rnd.Next(0,3)+ylow);
-        (int xs, int ys) = (rnd.Next(0,3)+xlow, rnd.Next(0,3)+ylow);
-        if ((x,y) == (xs, ys) || s.IsFixed(x,y) || s.IsFixed(xs,ys)){ //als de random swap niks doet of niet kan
-            return plateauStep(s); //nog ene keer
-        }
-        s.Swap(x, y, xs, ys);
+    /// <remarks>Resets the heuristic value of the sudoku to -1</remarks>
+    private static Sudoku plateauStep(ref Sudoku s) {
+        // Get random block
+        var randomBlockIndex = Random.Shared.Next(0, 9);
+        var randomBlock      = s.GetBlock((byte) randomBlockIndex);
+        // Get a non-fixed random tile pair to be swapped
+        var randomTileIndex1 = Random.Shared.Next(0, 9);
+        var randomTileIndex2 = Random.Shared.Next(0, 9);
+
+        if (randomTileIndex1 == randomTileIndex2)
+            return plateauStep(ref s); // Retry
+
+        // Translate index of a tile to coordinate of the BLOCK
+        int blockX = randomBlockIndex % 3 * 3,
+            blockY = randomBlockIndex / 3 * 3;
+        int ax = randomTileIndex1 % 3, ay = randomTileIndex1 / 3,
+            bx = randomTileIndex2 % 3, by = randomTileIndex2 / 3;
+        
+        // Don't swap a fixed tile
+        if (randomBlock.IsFixed(ax, ay) 
+         || randomBlock.IsFixed(bx, by))
+            return plateauStep(ref s); // Retry TODO: causes infinite recursion if a block is completely fixed
+        
+        // At this point, we found a valid swap. Swap!
+        // To do this properly, we need to translate the Block coordinates to Sudoku coordinates
+        ax += blockX; ay += blockY;
+        bx += blockX; by += blockY;
+        
+        s.Swap(ax, ay, bx, by, -1); // We did not determine the new heuristic value, thus reset it
         return s;
     }
-    private static Sudoku Step(Sudoku s, int oldH){
-        // 1. kies willekeurig 1 van de 9 blokken
-        Random rnd = new Random();
-        int xlow = 3* rnd.Next(0,3); //x lowerbound van random block
-        int ylow = 3* rnd.Next(0,3); //y lowerbound van random block
-        (int bh, int bx, int by, int bxs, int bys) best = (oldH,0,0,0,0);
-        // 2. probeer alle swaps binnen block (die mogelijk zijn en niet niks doen)
-        for (int y = ylow; y < ylow+3; y++) for (int x = xlow; x < xlow+3; x++){ 
-            if (!s.IsFixed(x,y)){
-                for (int ys = ylow; ys < ylow+3; ys++) for (int xs = xlow; xs < xlow+3; xs++){  //alle swaps bekijken
-                    if (!s.IsFixed(xs, ys) && (x,y) != (xs,ys)){ //niet fixed en swap doet niet niks
-                        int newH = s.DetermineHeuristicChangeAfterSwap(x, y, xs, ys, oldH);
-                        if (newH < best.bh){
-                            best = (newH, x, y, xs, ys);  //beste swap tot nu toe > best
-                        }
-                    }
-                }
-            } 
+    
+    /// <summary>
+    /// Picks a random block and finds and performs the best swap possible in tha block, based on the heuristic value
+    /// </summary>
+    /// <param name="s"></param>
+    /// <returns>Whether a swap was performed</returns>
+    private static bool step(ref Sudoku s)
+    {
+        // Prepare data
+        var bestH            = s.H;
+        var bestSwap         = Array.Empty<int>();
+        var randomBlockIndex = Random.Shared.Next(0, 9);
+        var randomBlock      = s.GetBlock((byte) randomBlockIndex);
+        int blockX = randomBlockIndex % 3 * 3,
+            blockY = randomBlockIndex / 3 * 3;
+		
+        // Try all swaps
+        for (var i = 0; i < 8; i++) for (var j = i + 1; j < 9; j++) // Note that j starts at i + 1, to prevent duplicate tests
+        {
+            // Translate index of a tile to coordinate of the BLOCK
+            //     [0..8] -> (x, y)
+            //     Example: 4 -> (1, 1)
+            int ax = i % 3, ay = i / 3,
+                bx = j % 3, by = j / 3;
+            
+            if (randomBlock.IsFixed(ax, ay) || randomBlock.IsFixed(bx, by))
+                continue; // Don't try to swap a fixed value
+            
+            // Convert coordinates within block to coordinates within SUDOKU
+            ax += blockX; ay += blockY;
+            bx += blockX; by += blockY;
+
+            // Try the swap, store it if is the best one yet
+            var h = s.DetermineHeuristicChangeAfterSwap(ax, ay, bx, by, s.H);
+            if (h < bestH)
+            {
+                bestH    = h;
+                bestSwap = new [] { ax, ay, bx, by };
+            }
         }
-        // 3. kies de beste indien die een verbetering opleverd
-        // Console.WriteLine($"Best: ({best.bx}, {best.by}) -> ({best.bxs}, {best.bys}), h change = {best.bh-oldH}");
-        if (oldH > best.bh) {
-            s.Swap(best.bx, best.by, best.bxs, best.bys);
-        }
-        return s; //als de beste swap beter is swap je. 
+        
+        // Apply best swap, if existing
+        if (!bestSwap.Any())
+            return false; // Indicate that no swap was made
+        s.Swap(bestSwap[0], bestSwap[1], bestSwap[2], bestSwap[3], bestH);
+        return true; // Indicate that a swap was made
     }
 }
