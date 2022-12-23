@@ -8,22 +8,26 @@ public class Sudoku
 {
 	public Sudoku (IReadOnlyList<byte> numbers)
 	{
-		// Converts list of numbers to blocks
+		// This constructor converts list of numbers to blocks
+		
 		for (var blockY = 0; blockY < 3; blockY++) for (var blockX = 0; blockX < 3; blockX++)
 		{
-			int x = 3 * blockX,
+			int x = 3 * blockX, // Determine the offset of each block
 				y = 3 * blockY;
 
+			// Generate tiles for the current block
 			var tiles = new Tile[3, 3];
 			for (var by = 0; by < 3; by++) for (var bx = 0; bx < 3; bx++)
 			{
-				var tileValue = numbers[(x + bx) + (y + by) * 9];
+				// Generate tiles based on the input
+				var tileValue = numbers[(x + bx) + (y + by) * 9]; // Calculations compensate for the inputs syntax
 				tiles[bx, by] = new Tile(tileValue, tileValue != 0);
 			}
 			
 			_blocks[blockX, blockY] = new Block(tiles);
 		}
 
+		// Don't forget to calculate the initial heuristic value
 		H = CalculateHeuristicValue();
 	}
 
@@ -32,6 +36,7 @@ public class Sudoku
 
 	public int H;
 
+	/// <summary>Gives a reference to the block, based on the given index (0 - 8)</summary>
 	/// <param name="index">0-based index, maximum of 8</param>
 	public Block GetBlock(byte index) {
 		if (index > 8)
@@ -42,6 +47,7 @@ public class Sudoku
 	public int CalculateHeuristicValue()
 	{
 		var h                         = 0;
+		// For every column and row, calculate its heuristic value and aggregate it.
 		for (var y = 0; y < 9; y++) h += _CalculateHeuristicValueOfEnumerable(GetRowEnumerable(y));
 		for (var x = 0; x < 9; x++) h += _CalculateHeuristicValueOfEnumerable(GetColumnEnumerable(x));
 
@@ -55,8 +61,8 @@ public class Sudoku
 		
 		foreach (var tile in tiles)
 		{
-			if (found[tile.Value]) h += 1;
-			else found[tile.Value] = true;
+			if (found[tile.Value]) h += 1; // Value is a duplicate, this means that a number is missing
+			else found[tile.Value] = true; // Unique value, remember that we found it
 		}
 
 		return h;
@@ -66,22 +72,23 @@ public class Sudoku
 	/// <remarks>Assumes that both points, a and b, belong to the same block.</remarks>
 	public int DetermineHeuristicChangeAfterSwap(int ax, int ay, int bx, int by, int currentH)
 	{
-		// Gather relevant data
+		// Gather relevant columns and rows
 		var columnA = GetColumnEnumerable(ax).ToList();
 		var rowA    = GetRowEnumerable(ay)	 .ToList();
 		var columnB = GetColumnEnumerable(bx).ToList();
 		var rowB    = GetRowEnumerable(by)	 .ToList();
 
+		// Remember the old values of the tiles before swapping
 		var oldA = columnA[ay];
 		var oldB = columnB[by];
 		
-		// Prepare data: remove the value to be swapped
+		// Prepare data: remove the tiles to be swapped
 		columnA.RemoveAt(ay);
 		rowA.	RemoveAt(ax);
 		columnB.RemoveAt(by);
 		rowB.	RemoveAt(bx);
 
-		return currentH
+		return currentH // Accumulate all changes in the heuristic value
 		     + getHeuristicChangeOf(columnA, oldA, oldB)
 		     + getHeuristicChangeOf(rowA,    oldA, oldB)
 		     + getHeuristicChangeOf(columnB, oldB, oldA)
@@ -94,17 +101,21 @@ public class Sudoku
 
 			if (oldValueWasDuplicate)
 			{
+				// If the new value is not a duplicate, this means that we progress
 				return newValueIsDuplicate ? 0 : -1;
 			}
 			else
 			{
+				// If the new value is not a duplicate, this means that we LOSE progress
 				return newValueIsDuplicate ? 1 : 0;
 			}
 		}
 	}
 	///<remarks> swaps two tiles in the sudoku, assumes the two tiles are in the same block</remarks>
 	public void Swap(int ax, int ay, int bx, int by, int newH) {
+		// Get the block, and its coordinates
 		var (block, xOffset, yOffset) = GetBlockContaining(ax, ay);
+		// Swap, using coordinates relative from the block's
 		block.Swap(
 			ax - xOffset, // Assumes that both points are within the same block
 			ay - yOffset,
@@ -142,7 +153,7 @@ public class Sudoku
 				yield return tile;
 	}
 
-	public override string ToString()
+	public override string ToString() // This is where the ASCII magic happens, which is hard to explain
 	{
 		StringBuilder sb = new();
 		const int totalWidth = (9 * 2 - 1) + 4; // 9 numbers with spaces, minus the last space, plus 2 separating bars with 2 spaces
