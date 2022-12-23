@@ -5,7 +5,7 @@ namespace SudokuCracker;
 public class Block
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-	private readonly Tile[,] _tiles = new Tile[3, 3];
+	private readonly Tile[,] _tiles;
 
 	public Block(Tile[,] values)
 	{
@@ -68,24 +68,24 @@ public class Block
 			select tile.Value
 		).Distinct().ToList();
 
-		foreach (var tile in GetAllTilesEnumerable())
-		{
-			if (tile.Value != 0) continue;
-			
-			for (byte i = 1; i <= 9; i++) // TODO: in stead of looping all posibillities, remember where you left off
-				if (!presentNumbers.Contains(i))
-				{
-					tile.Value = i;
-					presentNumbers.Add(i);
-					break; 
-				}
-		}
+		for (var y = 0; y < 3; y++)
+			for (var x = 0; x < 3; x++)
+			{
+				if (_tiles[x, y].Value != 0) continue;
+				for (byte i = 1; i <= 9; i++)
+					if (!presentNumbers.Contains(i))
+					{
+						_tiles[x, y].Value = i;
+						presentNumbers.Add(i);
+						break;
+					}
+			}
 	}
 
 	public override string ToString() // For debugging purposes
 	{
 		StringBuilder sb = new();
-		for (int i = 0; i < 3; i++)
+		for (var i = 0; i < 3; i++)
 		{
 			sb.Append(", ");
 			

@@ -87,10 +87,10 @@ public class Sudoku
 		     + getHeuristicChangeOf(columnB, oldB, oldA)
 		     + getHeuristicChangeOf(rowB,    oldB, oldA);
 		
-		int getHeuristicChangeOf(IEnumerable<Tile> enumerable, Tile old, Tile swapped)
+		int getHeuristicChangeOf(IReadOnlyCollection<Tile> range, Tile old, Tile swapped)
 		{
-			bool oldValueWasDuplicate = enumerable.Contains(old,     Tile.ValueComparer);
-			bool newValueIsDuplicate  = enumerable.Contains(swapped, Tile.ValueComparer);
+			bool oldValueWasDuplicate = range.Contains(old,     Tile.ValueComparer);
+			bool newValueIsDuplicate  = range.Contains(swapped, Tile.ValueComparer);
 
 			if (oldValueWasDuplicate)
 			{
