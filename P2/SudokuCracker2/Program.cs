@@ -18,11 +18,11 @@ class Program
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
         
 		// Solve the sudoku
-		var output = CBT.Search(_sudokus[SUDOKU_INDEX]);
+		var succes = CBT.Search(ref _sudokus[SUDOKU_INDEX]);
 		
 		// Print output
-		Console.WriteLine(output);
-		Console.WriteLine($"\nNew heuristic value: {output.H}");
+		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
+		Console.WriteLine($"\nNew heuristic value: {_sudokus[SUDOKU_INDEX].H}");
 	}
 
 	static void LoadSudokus()

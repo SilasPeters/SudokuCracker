@@ -3,7 +3,7 @@ using System.Text;
 
 namespace SudokuCracker2;
 
-public class Sudoku
+public struct Sudoku
 {
 	public Sudoku (IReadOnlyList<byte> numbers)
 	{
