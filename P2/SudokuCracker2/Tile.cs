@@ -1,25 +1,19 @@
 ﻿namespace SudokuCracker2;
 using System.Diagnostics;
 
-[DebuggerDisplay("{Value}, fixed: {IsFixed}")]
+[DebuggerDisplay("{Value}, fixed: {IsFixed}, domain: {Domain}")]
 public struct Tile
 {
-	public Tile(byte value, bool isFixed)
+	public Tile(byte? value, bool isFixed, IEnumerable<byte> domain)
 	{
 		Value   = value;
 		IsFixed = isFixed;
+		Domain  = new HashSet<byte>(domain);
 	}
 
-	// A custom equality comparer, used to compare tiles based on their contents
-	private sealed class ValueEqualityComparer : IEqualityComparer<Tile>
-	{
-		public bool Equals(Tile x, Tile y) => x.Value == y.Value;
-		public int GetHashCode(Tile obj) => obj.Value.GetHashCode();
-	}
-	public static IEqualityComparer<Tile> ValueComparer { get; } = new ValueEqualityComparer();
+	public byte?       Value   { get; set; }
+	public bool        IsFixed { get; set; }
+	public ISet<byte>  Domain  { get; set; }
 
-	public byte Value   { get; set; }
-	public bool IsFixed { get; set; }
-
-	public override string ToString() => Value > 0 ? Value.ToString() : "-";
+	public override string ToString() => Value != null ? Value.ToString()! : "-";
 }
