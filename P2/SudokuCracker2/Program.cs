@@ -1,4 +1,4 @@
-﻿namespace SudokuCracker;
+﻿namespace SudokuCracker2;
 
 class Program
 {
@@ -18,7 +18,7 @@ class Program
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
         
 		// Solve the sudoku
-		var output = ILS.search(_sudokus[SUDOKU_INDEX], PLATEU_LENGTH);
+		var output = CBT.Search(_sudokus[SUDOKU_INDEX]);
 		
 		// Print output
 		Console.WriteLine(output);

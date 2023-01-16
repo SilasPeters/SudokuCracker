@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 
-namespace SudokuCracker;
+namespace SudokuCracker2;
 public class Block
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -58,8 +58,8 @@ public class Block
 	{
 		// Store the numbers which are present, using old-school LINQ
 		var presentNumbers = (
-			from tile in GetAllTilesEnumerable()
-			where tile.Value is not 0
+			  from tile in GetAllTilesEnumerable()
+			 where tile.Value is not 0
 			select tile.Value
 		).Distinct().ToList();
 

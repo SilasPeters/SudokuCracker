@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 
-namespace SudokuCracker;
+namespace SudokuCracker2;
 
 public class Sudoku
 {
