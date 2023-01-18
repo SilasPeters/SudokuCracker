@@ -16,7 +16,7 @@ public class CBT
          *  if (!CBTAllowsIt()) break;
          * 
          *  if (TryForwardCheck(sudoku, x, y, out var sdk))
-         *      if (Search(sdk, i + 1)) return true;
+         *      if (TrySearch(sdk, i + 1)) return true;
          * 
          * tile[x,y] = null
          * return false
@@ -106,22 +106,25 @@ public class CBT
         var found = new bool[10];
         for (byte xi = 0; xi < 9; ++xi){
             var num =sdk.Tiles[xi,y].Value;
-            if (found[num]) return false;
-            found[num] = true;
+            if (num == null) continue;
+            if (found[(byte)num]) return false;
+            found[(byte)num] = true;
         }
         found = new bool[10];
         for (byte yi = 0; yi < 9; ++yi){
             var num =sdk.Tiles[x,yi].Value;
-            if (found[num]) return false;
-            found[num] = true;
+            if (num == null) continue;
+            if (found[(byte)num]) return false;
+            found[(byte)num] = true;
         }
         found = new bool[10];
-        byte BlockX = x - x % 3, BlockY = y - y % 3;
+        byte BlockX = (byte)(x - x % 3), BlockY = (byte)(y - y % 3);
         for (byte xi = BlockX; xi < BlockX+3; ++xi){
             for (byte yi = BlockY; yi < BlockY+3; ++yi){
                 var num =sdk.Tiles[xi,yi].Value;
-                if (found[num]) return false;
-                found[num] = true;
+                if (num == null) continue;
+                if (found[(byte)num]) return false;
+                found[(byte)num] = true;
             }
         }
         return true;
@@ -145,5 +148,10 @@ public class CBT
          * branching te voorkomen. Het is niet vereist, dus leg ik het hier uit, maar misschien toch weer wel nodig voor
          * hier, dus leg ik het hier uit :}. Ik heb t al uitgepluisd in mijn hoofd, dus vraag er vooral naar.
          */
+    }
+
+    internal static object TrySearch(ref Sudoku sudoku)
+    {
+        throw new NotImplementedException();
     }
 }
