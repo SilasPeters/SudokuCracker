@@ -21,7 +21,7 @@ class Program
 		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var solution);
 
 		// Print output
-		Console.WriteLine(success ? solution : "Whoopsie daysie, you caught us!");
+		Console.WriteLine(success ? solution : "Whoopsie daisy, you caught us!");
 	}
 
 	static void LoadSudokus()
