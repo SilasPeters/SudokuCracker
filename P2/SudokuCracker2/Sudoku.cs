@@ -12,7 +12,7 @@ public readonly struct Sudoku
 	{
 		for (var i = 0; i < 81; i++)
 		{
-			Tiles[i % 9, i / 9] = numbers[i] != 0
+			Tiles[i / 9, i % 9] = numbers[i] != 0
 				? new Tile(numbers[i], true,  new[] { numbers[i] })
 				: new Tile(null,  false, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 		}

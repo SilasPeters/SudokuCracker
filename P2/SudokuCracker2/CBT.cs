@@ -29,7 +29,7 @@ public class CBT
 	    byte x = (byte)(i % 9), y = (byte)(i / 9);
 	    foreach(var s in sdk.Tiles[x,y].Domain) {
 		    sdk.Tiles[x,y].Value = s;
-		    if (!CBTAllowsIt(ref sdk, x, y)) break;
+		    if (!CBTAllowsIt(ref sdk, x, y)) continue;
 		    if (TryForwardCheck(sdk, x, y, out var sdkSimplified)) {
 			    if (TrySearch(sdkSimplified, out var attempt, ++i)) {
 				    result = attempt;
