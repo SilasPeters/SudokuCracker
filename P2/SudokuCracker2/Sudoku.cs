@@ -27,6 +27,14 @@ public readonly struct Sudoku
 		return true;
 	}
 
+	/// <param name="column">The x-index of every tile mapped over</param>
+	/// <param name="f">A method that accepts a tile and the y-coordinate of the tile</param>
+	public void MapOverColumn_(byte column, Action<Tile, byte> f)
+	{
+		for (byte row = 0; row < 9; row++)
+			f(Tiles[column, row], row);
+	}
+
 	public override string ToString() // This is where the ASCII magic happens, which is hard to explain
 	{
 		StringBuilder sb = new();

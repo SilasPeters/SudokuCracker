@@ -24,15 +24,15 @@ public class CBT
     }
 
     /// <summary>
-    /// After setting a tile, the constraints should be simpliefied by performing this forward check.
+    /// After setting a tile, the constraints should be simplified by performing this forward check.
     /// This check removes the value of tile[<paramref name="x"/>,<paramref name="y"/>] from the domain of every tile in the block, row and column containing
     /// tile[<paramref name="x"/>,<paramref name="y"/>]. If a domain turns out to be empty afterwards, it stops.
     /// </summary>
-    /// <param name="sudoku"> A copy of the sudoku to mutate </param>
-    /// <param name="x"> The x-coordinate of the tile which was set </param>
-    /// <param name="y"> The y-coordinate of the tile which was set </param>
-    /// <param name="result"> The sudoku with simplified constraints/domains. Only partially simplified if the check fails </param>
-    /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set </returns>
+    /// <param name="sudoku"> A copy of the sudoku to mutate. </param>
+    /// <param name="x"> The x-coordinate of the tile which was set before this check. </param>
+    /// <param name="y"> The y-coordinate of the tile which was set before this check. </param>
+    /// <param name="result"> The sudoku with simplified constraints/domains. Only partially simplified if the check fails. </param>
+    /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set. </returns>
     private static bool TryForwardCheck(Sudoku sudoku, byte x, byte y, out Sudoku result)
     {
 		result = sudoku;
