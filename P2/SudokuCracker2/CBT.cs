@@ -2,7 +2,7 @@ namespace SudokuCracker2;
 
 public class CBT
 {
-    public static bool Search(ref Sudoku sudoku, byte i = 0)
+    public static bool TrySearch(Sudoku sdk, out Sudoku result, byte i = 0)
     {
         /*
          * Assumes that all domains are set
@@ -21,6 +21,24 @@ public class CBT
          * tile[x,y] = null
          * return false
          */
+
+
+	    result = sdk;
+        if (sdk.AllTilesFilled())
+	        return true;
+	    byte x = (byte)(i % 9), y = (byte)(i / 9);
+	    foreach(var s in sdk.Tiles[x,y].Domain) {
+		    sdk.Tiles[x,y].Value = s;
+		    if (!CBTAllowsIt(ref sdk, x, y)) break;
+		    if (TryForwardCheck(sdk, x, y, out var sdkSimplified)) {
+			    if (TrySearch(sdkSimplified, out var attempt, ++i)) {
+				    result = attempt;
+				    return true;
+			    }
+		    }
+	    }
+	    
+		return false;
     }
 
     /// <summary>
@@ -71,7 +89,7 @@ public class CBT
     }
 
     /// <summary> Checks if the given sudoku still is a partial answer after setting tile[x,y] </summary>
-    private static bool CBTAllowsIt(ref Sudoku sudoku, byte x, byte y)
+    private static bool CBTAllowsIt(ref Sudoku sdk, byte x, byte y)
     {
         /*
          * De code hieronder kan veel code hergebruiken van Block.txt en de methode herboven
@@ -85,6 +103,28 @@ public class CBT
          * Voor elke waarde in block van [x,y]
          *  Check of er geen duplicates in zitten
          */
+        var found = new bool[10];
+        for (byte xi = 0; xi < 9; ++xi){
+            var num =sdk.Tiles[xi,y].Value;
+            if (found[num]) return false;
+            found[num] = true;
+        }
+        found = new bool[10];
+        for (byte yi = 0; yi < 9; ++yi){
+            var num =sdk.Tiles[x,yi].Value;
+            if (found[num]) return false;
+            found[num] = true;
+        }
+        found = new bool[10];
+        byte BlockX = x - x % 3, BlockY = y - y % 3;
+        for (byte xi = BlockX; xi < BlockX+3; ++xi){
+            for (byte yi = BlockY; yi < BlockY+3; ++yi){
+                var num =sdk.Tiles[xi,yi].Value;
+                if (found[num]) return false;
+                found[num] = true;
+            }
+        }
+        return true;
     }
 
     /// <summary> Maakt alles knoop-consistent </summary>
