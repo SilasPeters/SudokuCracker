@@ -149,9 +149,4 @@ public class CBT
          * hier, dus leg ik het hier uit :}. Ik heb t al uitgepluisd in mijn hoofd, dus vraag er vooral naar.
          */
     }
-
-    internal static object TrySearch(ref Sudoku sudoku)
-    {
-        throw new NotImplementedException();
-    }
 }
