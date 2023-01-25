@@ -8,12 +8,12 @@ public struct Tile
 	{
 		Value   = value;
 		IsFixed = isFixed;
-		Domain  = new HashSet<byte>(domain);
+		Domain  = domain.Aggregate("", (s, i) => s + i);
 	}
 
 	public byte?       Value   { get; set; }
 	public bool        IsFixed { get; set; }
-	public ISet<byte>  Domain  { get; set; }
+	public string      Domain  { get; set; }
 
 	public override string ToString() => Value != null ? Value.ToString()! : "-";
 }

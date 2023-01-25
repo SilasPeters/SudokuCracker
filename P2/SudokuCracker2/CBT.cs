@@ -32,7 +32,7 @@ public class CBT
 	        return TrySearch(sdk, out result, ++i);
         
 	    foreach(var s in sdk.Tiles[x,y].Domain) {
-		    sdk.Tiles[x,y].Value = s;
+		    sdk.Tiles[x,y].Value = byte.Parse(s.ToString());
 		    if (!CBTAllowsIt(ref sdk, x, y)) continue;
 		    if (TryForwardCheck(sdk, x, y, out var sdkSimplified)) {
 			    if (TrySearch(sdkSimplified, out var attempt, ++i)) {
@@ -63,18 +63,28 @@ public class CBT
 		// Process the row containing the tile that was set
 		for (var column = 0; column < 9; column++)
 		{
-			if (column != x)
-				result.Tiles[column, y].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[column, y].Domain.Any())
+			if (column == x) continue;
+			ref var tile = ref result.Tiles[column, y];
+				
+			var indexOfCurrentValue = tile.Domain.IndexOf(valueOfSetTile.ToString(), StringComparison.Ordinal);
+			if (indexOfCurrentValue != -1)
+				tile.Domain = tile.Domain.Remove(indexOfCurrentValue, 1); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			
+			if (!tile.Domain.Any())
 				return false;
 		}
 
 		// Process the column containing the tile that was set
 		for (var row = 0; row < 9; row++)
 		{
-			if (row != y)
-				result.Tiles[x, row].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[x, row].Domain.Any())
+			if (row == y) continue;
+			ref var tile = ref result.Tiles[x, row];
+				
+			var indexOfCurrentValue = tile.Domain.IndexOf(valueOfSetTile.ToString(), StringComparison.Ordinal);
+			if (indexOfCurrentValue != -1)
+				tile.Domain = tile.Domain.Remove(indexOfCurrentValue, 1); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+				
+			if (!tile.Domain.Any())
 				return false;
 		}
 		
@@ -83,9 +93,14 @@ public class CBT
 			blockY = y - y % 3;
 		for (var by = blockY; by < blockY + 3; by++) for (var bx = blockX; bx < blockX + 3; bx++)
 		{
-			if (bx != x && by != y) // The tile is not on a previously mutated row/column
-				result.Tiles[bx, by].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[bx, by].Domain.Any())
+			if (bx == x || by == y) continue; // The tile is not on a previously mutated row/column
+			ref var tile = ref result.Tiles[bx, by];
+			
+			var indexOfCurrentValue = tile.Domain.IndexOf(valueOfSetTile.ToString(), StringComparison.Ordinal);
+			if (indexOfCurrentValue != -1)
+				tile.Domain = tile.Domain.Remove(indexOfCurrentValue, 1); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			
+			if (!tile.Domain.Any())
 				return false;
 		}
 		
