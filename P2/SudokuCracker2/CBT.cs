@@ -131,12 +131,12 @@ public class CBT
     }
 
     /// <summary> Maakt alles knoop-consistent </summary>
-    private static void SetDomains(ref Sudoku sudoku)
+    public static void SetDomains(ref Sudoku sudoku)
     {
 	    for (byte y = 0; y < 9; y++)
 		    for (byte x = 0; x < 9; x++)
 			    if (sudoku.Tiles[x, y].Value is not null) // For every non-empty tile
-				    TryForwardCheck(sudoku, x, y, out _); // Simplify neighbouring domains
+				    TryForwardCheck(sudoku, x, y, out sudoku); // Simplify neighbouring domains
 					// ^ This will/should always succeed
 					
 	    /*

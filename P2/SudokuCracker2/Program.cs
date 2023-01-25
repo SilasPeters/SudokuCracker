@@ -18,9 +18,13 @@ class Program
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
         
 		// Solve the sudoku
+		for (int i = 0; i < _sudokus.Length; i++)
+			CBT.SetDomains(ref _sudokus[i]);
+		
 		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var solution);
 
 		// Print output
+		Console.WriteLine(solution + "\n");
 		Console.WriteLine(success ? solution : "Whoopsie daisy, you caught us!");
 	}
 
