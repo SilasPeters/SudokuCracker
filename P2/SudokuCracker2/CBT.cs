@@ -26,7 +26,11 @@ public class CBT
 	    result = sdk;
         if (sdk.AllTilesFilled())
 	        return true;
-	    byte x = (byte)(i % 9), y = (byte)(i / 9);
+        byte x = (byte)(i % 9), y = (byte)(i / 9);
+        
+        if (sdk.Tiles[x,y].IsFixed) // Value is fixed, don't waste time on branching
+	        return TrySearch(sdk, out result, ++i);
+        
 	    foreach(var s in sdk.Tiles[x,y].Domain) {
 		    sdk.Tiles[x,y].Value = s;
 		    if (!CBTAllowsIt(ref sdk, x, y)) continue;
@@ -60,8 +64,8 @@ public class CBT
 		for (var column = 0; column < 9; column++)
 		{
 			if (column != x)
-				result.Tiles[x, column].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[x, column].Domain.Any())
+				result.Tiles[column, y].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			if (!result.Tiles[column, y].Domain.Any())
 				return false;
 		}
 
@@ -69,7 +73,7 @@ public class CBT
 		for (var row = 0; row < 9; row++)
 		{
 			if (row != y)
-				result.Tiles[row, y].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+				result.Tiles[x, row].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
 			if (!result.Tiles[x, row].Domain.Any())
 				return false;
 		}

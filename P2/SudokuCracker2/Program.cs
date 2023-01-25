@@ -18,8 +18,7 @@ class Program
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
         
 		// Solve the sudoku
-		for (int i = 0; i < _sudokus.Length; i++)
-			CBT.SetDomains(ref _sudokus[i]);
+		CBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
 		
 		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var solution);
 
