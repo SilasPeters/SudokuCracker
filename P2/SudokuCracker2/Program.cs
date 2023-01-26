@@ -18,13 +18,16 @@ class Program
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
         
 		// Solve the sudoku
+		CBT cBT = new CBT();
 		CBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
-		
-		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var solution);
+		Sudoku? solution = cBT.TrySearch(_sudokus[SUDOKU_INDEX]);
 
 		// Print output
-		Console.WriteLine(solution + "\n");
-		Console.WriteLine(success ? solution : "Whoopsie daisy, you caught us!");
+		if (solution != null){
+			Console.WriteLine(solution);
+		} else{
+			Console.WriteLine("No solution found");
+		}
 	}
 
 	static void LoadSudokus()

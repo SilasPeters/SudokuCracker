@@ -3,8 +3,22 @@ using System.Text;
 
 namespace SudokuCracker2;
 
-public readonly struct Sudoku
+public readonly struct Sudoku 
 {
+	public Sudoku Clone() {
+		Tile[,] tarray = new Tile[9,9];
+		for (byte i = 0; i < 81; ++i)
+		{
+			tarray[i % 9, i / 9] = this.Tiles[i % 9, i / 9].Clone();
+		}
+		Sudoku s = new Sudoku(tarray);
+		return s;
+
+	}
+	public Sudoku (Tile[,] tiles){
+		Tiles = tiles;
+	}
+
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 	public readonly Tile[,] Tiles = new Tile[9, 9];
 
@@ -18,14 +32,6 @@ public readonly struct Sudoku
 		}
 	}
 
-	public bool AllTilesFilled()
-	{
-		// Start looking from the lower-right side of the array, to see if a tile has not been set yet.
-		// This assumes that tiles are set starting from the top-left in reading direction.
-		for (var y = 8; y >= 0; y--) for (var x = 8; x >= 0; x--)
-			if (Tiles[x, y].Value is null) return false;
-		return true;
-	}
 
 	/// <param name="column">The x-index of every tile mapped over</param>
 	/// <param name="f">A method that accepts a tile and the y-coordinate of the tile</param>
