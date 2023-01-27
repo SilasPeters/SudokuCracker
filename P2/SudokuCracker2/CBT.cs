@@ -6,7 +6,7 @@ namespace SudokuCracker2;
 public class CBT
 {
     public CBT(){
-        History = new Sudoku[82];
+        History = new Sudoku[81];
     }
     public Sudoku[] History = new Sudoku[81];
     public Sudoku? TrySearch(Sudoku sdk, byte i = 0)
@@ -33,16 +33,7 @@ public class CBT
 		return null;
     }
 
-    /// <summary>
     /// After setting a tile, the domains should be culled
-    /// This check removes the value of tile[<paramref name="x"/>,<paramref name="y"/>] from the domain of every tile in the block, row and column containing
-    /// tile[<paramref name="x"/>,<paramref name="y"/>]. If a domain turns out to be empty afterwards, it stops and returns false.
-    /// </summary>
-    /// <param name="sudoku"> A copy of the sudoku to mutate. </param>
-    /// <param name="x"> The x-coordinate of the tile which was set before this check. </param>
-    /// <param name="y"> The y-coordinate of the tile which was set before this check. </param>
-    /// <param name="result"> The sudoku with simplified constraints/domains. Only partially simplified if the check fails. </param>
-    /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set. </returns>
      private Sudoku? TryForwardCheck(Sudoku sudoku, byte x, byte y)
     {
 		Sudoku result = sudoku;
@@ -72,7 +63,6 @@ public class CBT
             } 
 			if (result.Tiles[bx, by].Domain.Count() <= 0) return null;
 		}
-
 		return result;
     }
 
@@ -118,18 +108,7 @@ public class CBT
 			    if (sudoku.Tiles[x, y].Value is not null) // For every non-empty tile
 				    result = (Sudoku)TryForwardCheck(result, x, y); // Simplify neighbouring domains
 
-        return result;
-					// ^ This will/should always succeed
-					
-	    /*
-         * Ik heb geen idee of alles nu knoop-consistent is.
-         * Een toevoeging zou dit zijn: Indien je singletons hebt in een domein van een tegel,
-         * moeten alle buren die singelton dus niet in hun domein hebben. Je kunt ook meteen de tegel met een singelton-
-         * domein zijn waarde geven (de singelton). Dit allemaal kan in één zweepslag meegenomen worden in de bestaande
-         * ForwardCheck() methode, die dan PropagatedForwardCheck() kan heten. Dit kan alles sneller maken door onnodige
-         * branching te voorkomen. Het is niet vereist, dus leg ik het hier uit, maar misschien toch weer wel nodig voor
-         * hier, dus leg ik het hier uit :}. Ik heb t al uitgepluisd in mijn hoofd, dus vraag er vooral naar.
-         */
+        return result; //This will/should always succeed
     }
 
 	public static bool AllTilesFilled(ref Sudoku sdk)
@@ -143,5 +122,4 @@ public class CBT
         }
 		return true;
 	}
-
 }

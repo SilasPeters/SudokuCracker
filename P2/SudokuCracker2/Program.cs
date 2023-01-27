@@ -4,7 +4,7 @@ class Program
 {
 	// Parameters: change these as you wish
 	private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
-	private const int SUDOKU_INDEX  = 0;
+	private const int SUDOKU_INDEX  = 3;
 	private const int PLATEU_LENGTH = 10;
     
 	
