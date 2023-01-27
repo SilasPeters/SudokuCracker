@@ -26,7 +26,7 @@ class Program
 	static void Search(int sdk_index, string[] args){
 		int start = 0;
 		if (args.Contains("-t") || args.Contains("--timer")){
-			start = System.DateTime.Now.Millisecond;
+			start = DateTime.Now.Millisecond;
 		}
 		Console.WriteLine("The selected sudoku:");
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
@@ -44,7 +44,7 @@ class Program
 			Console.WriteLine("No solution found");
 		}
 		if (args.Contains("-t") || args.Contains("--timer")){
-			int stop = System.DateTime.Now.Millisecond;
+			int stop = DateTime.Now.Millisecond;
 			Console.WriteLine("solving this sudoku took " + (stop - start) + " milliseconds");
 		}
 	}
