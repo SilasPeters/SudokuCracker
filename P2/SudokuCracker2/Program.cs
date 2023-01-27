@@ -10,8 +10,12 @@ class Program
 	
 	private static Sudoku[] _sudokus;
 	
-	static void Main()
+	static void Main(string[] args)
 	{
+		int start = 0;
+		if (args.Contains("-t") || args.Contains("--timer")){
+			start = System.DateTime.Now.Millisecond;
+		}
 		// Load sudokus
 		LoadSudokus();
 		Console.WriteLine("The selected sudoku:");
@@ -28,6 +32,10 @@ class Program
 			Console.WriteLine(solution);
 		} else{
 			Console.WriteLine("No solution found");
+		}
+		if (args.Contains("-t") || args.Contains("--timer")){
+			int stop = System.DateTime.Now.Millisecond;
+			Console.WriteLine("solving this sudoku took " + (stop - start) + " milliseconds");
 		}
 	}
 
