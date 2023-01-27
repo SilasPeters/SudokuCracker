@@ -13,7 +13,6 @@ public readonly struct Sudoku
 		}
 		Sudoku s = new Sudoku(tarray);
 		return s;
-
 	}
 	public Sudoku (Tile[,] tiles){
 		Tiles = tiles;
