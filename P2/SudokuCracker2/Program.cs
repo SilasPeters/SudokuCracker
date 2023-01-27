@@ -5,26 +5,36 @@ class Program
 	// Parameters: change these as you wish
 	private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
 	private const int SUDOKU_INDEX  = 0;
-	private const int PLATEU_LENGTH = 10;
-    
+	private const bool initiallySetDomains = true; //whether or not to initially cull domains (testing)
 	
 	private static Sudoku[] _sudokus;
 	
 	static void Main(string[] args)
 	{
+		// Load sudokus
+		LoadSudokus();
+
+		if (args.Contains("-all") || args.Contains("--solve-all")){
+			for (int j = 0; j < amountOfSudokus(); j++){
+				Search(j, args);
+			}
+		} else {
+			Search(SUDOKU_INDEX, args);
+		}
+
+	}
+	static void Search(int sdk_index, string[] args){
 		int start = 0;
 		if (args.Contains("-t") || args.Contains("--timer")){
 			start = System.DateTime.Now.Millisecond;
 		}
-		// Load sudokus
-		LoadSudokus();
 		Console.WriteLine("The selected sudoku:");
 		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
         
 		// Solve the sudoku
 		CBT cBT = new CBT();
 		cBT.History[0] = (_sudokus[SUDOKU_INDEX]);
-		cBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
+		if (initiallySetDomains) cBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
 		Sudoku? solution = cBT.TrySearch(_sudokus[SUDOKU_INDEX]);
 
 		// Print output
@@ -37,6 +47,11 @@ class Program
 			int stop = System.DateTime.Now.Millisecond;
 			Console.WriteLine("solving this sudoku took " + (stop - start) + " milliseconds");
 		}
+	}
+
+	static int amountOfSudokus(){
+			var lines = File.ReadAllLines(SudokuTestsPath);
+			return lines.Length / 2;
 	}
 
 	static void LoadSudokus()

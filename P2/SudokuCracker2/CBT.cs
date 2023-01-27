@@ -1,10 +1,10 @@
-//implement IClonable interface
-
-
 namespace SudokuCracker2;
+
 
 public class CBT
 {
+    public const bool useTFC = true; //whether or not you want to use TryForwardCheck (used for testing)
+    
     public CBT(){
         History = new Sudoku[82];
     }
@@ -19,14 +19,19 @@ public class CBT
         if (sdk.Tiles[x,y].IsFixed) return TrySearch(sdk, (byte)((int)i+1)); // Value is fixed, don't waste time on branching
 
         List<byte> Domain = new List<byte>(History[i].Tiles[x,y].Domain); // Copy domain to prevent modification of original domain
-	    foreach(byte s in Domain) { //go through entire (original) domain
-            Sudoku sdk2 = (Sudoku) History[i].Clone();//copy sudoku from history to prevent modification of original sudoku
+	    foreach(byte s in Domain) { 
+            Sudoku sdk2 = (Sudoku) History[i].Clone(); //copy from history to prevent cross-contamination between attempts
 		    sdk2.Tiles[x,y].Value = s;
 		    if (CBTAllowsIt(sdk2, x, y)) { //check if filling in the value doesn't break the rules
-                Sudoku? sdkSimplified = TryForwardCheck(sdk2, x, y);
-                if (sdkSimplified != null) { //if domain could be simplified (doesn't yield an empty domain somewhere)
-                    Sudoku? attempt = TrySearch((Sudoku) sdkSimplified!, (byte)((int)i+1)); //try to solve the simplified sudoku
-                    if (attempt != null) return attempt; //if solved, return the (partially) solved sudoku
+                if (useTFC){
+                    Sudoku? sdkSimplified = TryForwardCheck(sdk2, x, y);
+                    if (sdkSimplified != null) { //if domain could be simplified (doesn't yield an empty domain somewhere)
+                        Sudoku? attempt = TrySearch((Sudoku) sdkSimplified!, (byte)((int)i+1)); //try to solve the simplified sudoku
+                        if (attempt != null) return attempt; //if solved, return the (partially) solved sudoku
+                    }
+                } else {
+                        Sudoku? attempt = TrySearch((Sudoku) sdk2!, (byte)((int)i+1)); 
+                        if (attempt != null) return attempt; 
                 }
             } 
 	    }
@@ -35,14 +40,7 @@ public class CBT
 
     /// <summary>
     /// After setting a tile, the domains should be culled
-    /// This check removes the value of tile[<paramref name="x"/>,<paramref name="y"/>] from the domain of every tile in the block, row and column containing
-    /// tile[<paramref name="x"/>,<paramref name="y"/>]. If a domain turns out to be empty afterwards, it stops and returns false.
     /// </summary>
-    /// <param name="sudoku"> A copy of the sudoku to mutate. </param>
-    /// <param name="x"> The x-coordinate of the tile which was set before this check. </param>
-    /// <param name="y"> The y-coordinate of the tile which was set before this check. </param>
-    /// <param name="result"> The sudoku with simplified constraints/domains. Only partially simplified if the check fails. </param>
-    /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set. </returns>
      private Sudoku? TryForwardCheck(Sudoku sudoku, byte x, byte y)
     {
 		Sudoku result = sudoku;
