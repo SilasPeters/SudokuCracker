@@ -11,59 +11,25 @@ public class CBT
     public Sudoku[] History = new Sudoku[81];
     public Sudoku? TrySearch(Sudoku sdk, byte i = 0)
     {
-        /*
-         * Assumes that all domains are set
-         * 
-		 * if (sudoku.AllTilesFilled()) return true;
-         * 
-         * int x = i % 9, y = i / 9 of zo
-         * 
-         * for every value in tile[x,y].Domain
-         *  tile[x,y].Value = iterated value
-         *  if (!CBTAllowsIt()) break;
-         * 
-         *  if (TryForwardCheck(sudoku, x, y, out var sdk))
-         *      if (TrySearch(sdk, i + 1)) return true;
-         * 
-         * tile[x,y] = null
-         * return false
-         */
-         History[i] = sdk.Clone();
+        this.History[i] = sdk.Clone();
 
         if (AllTilesFilled(ref sdk)) return sdk; //if sudoku filled, return it
         byte x = (byte)(i % 9), y = (byte)(i / 9);
 
-        if (sdk.Tiles[x,y].IsFixed) return TrySearch(sdk, ++i); // Value is fixed, don't waste time on branching
-
-        Console.WriteLine($"Domain of tile {x},{y} is of size {sdk.Tiles[x,y].Domain.Count}");
-
+        if (sdk.Tiles[x,y].IsFixed) return TrySearch(sdk, (byte)((int)i+1)); // Value is fixed, don't waste time on branching
 
         List<byte> Domain = new List<byte>(History[i].Tiles[x,y].Domain); // Copy domain to prevent modification of original domain
 	    foreach(byte s in Domain) { //go through entire (original) domain
             Sudoku sdk2 = (Sudoku) History[i].Clone();//copy sudoku from history to prevent modification of original sudoku
 		    sdk2.Tiles[x,y].Value = s;
-            Console.WriteLine($"Trying {s} at ({x},{y})");
-            Console.WriteLine(sdk2);
-            if (x == 7 && y == 0 && s == 7){
-                    //this is just here for breakpoints
-            }
 		    if (CBTAllowsIt(sdk2, x, y)) { //check if filling in the value doesn't break the rules
                 Sudoku? sdkSimplified = TryForwardCheck(sdk2, x, y);
                 if (sdkSimplified != null) { //if domain could be simplified (doesn't yield an empty domain somewhere)
-                    Sudoku? attempt = TrySearch((Sudoku) sdkSimplified!, ++i); //try to solve the simplified sudoku
-                    Console.WriteLine($"Attempt at {x},{y} with {s} returned {attempt != null}");
+                    Sudoku? attempt = TrySearch((Sudoku) sdkSimplified!, (byte)((int)i+1)); //try to solve the simplified sudoku
                     if (attempt != null) return attempt; //if solved, return the (partially) solved sudoku
-                    Console.WriteLine($"domain at {x},{y} is now size {sdk2.Tiles[x,y].Domain.Count}");
                 }
-            } else {
-                Console.WriteLine("CBT doesn't allow it");  //if this value doesn't work, try the next one
-            }
+            } 
 	    }
-        Console.WriteLine("\n");
-        //print domain
-        Console.Write("done with domain: ");
-        foreach (byte s in Domain) Console.Write($"{s} ");
-        Console.Write($"at pos {x},{y} \n");
 		return null;
     }
 
@@ -77,7 +43,7 @@ public class CBT
     /// <param name="y"> The y-coordinate of the tile which was set before this check. </param>
     /// <param name="result"> The sudoku with simplified constraints/domains. Only partially simplified if the check fails. </param>
     /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set. </returns>
-     private static Sudoku? TryForwardCheck(Sudoku sudoku, byte x, byte y)
+     private Sudoku? TryForwardCheck(Sudoku sudoku, byte x, byte y)
     {
 		Sudoku result = sudoku;
 		var valueOfSetTile = (byte) result.Tiles[x, y].Value!;
@@ -144,7 +110,7 @@ public class CBT
     }
 
     /// <summary> Maakt alles knoop-consistent </summary>
-    public static Sudoku SetDomains(ref Sudoku sudoku)
+    public Sudoku SetDomains(ref Sudoku sudoku)
     {
         Sudoku result = sudoku;
 	    for (byte y = 0; y < 9; y++)

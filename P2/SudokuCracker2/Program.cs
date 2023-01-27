@@ -19,7 +19,8 @@ class Program
         
 		// Solve the sudoku
 		CBT cBT = new CBT();
-		CBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
+		cBT.History[0] = (_sudokus[SUDOKU_INDEX]);
+		cBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
 		Sudoku? solution = cBT.TrySearch(_sudokus[SUDOKU_INDEX]);
 
 		// Print output
