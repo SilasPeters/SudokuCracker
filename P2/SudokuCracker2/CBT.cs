@@ -28,7 +28,7 @@ public class CBT
          * tile[x,y] = null
          * return false
          */
-         History[i] = sdk;
+         History[i] = sdk.Clone();
 
         if (AllTilesFilled(ref sdk)) return sdk; //if sudoku filled, return it
         byte x = (byte)(i % 9), y = (byte)(i / 9);
@@ -42,6 +42,11 @@ public class CBT
 	    foreach(byte s in Domain) { //go through entire (original) domain
             Sudoku sdk2 = (Sudoku) History[i].Clone();//copy sudoku from history to prevent modification of original sudoku
 		    sdk2.Tiles[x,y].Value = s;
+            Console.WriteLine($"Trying {s} at ({x},{y})");
+            Console.WriteLine(sdk2);
+            if (x == 7 && y == 0 && s == 7){
+                    //this is just here for breakpoints
+            }
 		    if (CBTAllowsIt(sdk2, x, y)) { //check if filling in the value doesn't break the rules
                 Sudoku? sdkSimplified = TryForwardCheck(sdk2, x, y);
                 if (sdkSimplified != null) { //if domain could be simplified (doesn't yield an empty domain somewhere)
@@ -80,22 +85,15 @@ public class CBT
 		// Process the row containing the tile that was set
 		for (var xi = 0; xi < 9; xi++)
 		{
-        if (x == 1 && y == 0 && valueOfSetTile == 8){
-
-        }
-			if (xi != x)
-				result.Tiles[xi, y].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[xi, y].Domain.Any())
-				return null;
+			if (xi != x) result.Tiles[xi, y].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			if (result.Tiles[xi, y].Domain.Count() <= 0) return null; //if setting this tile to this value causes some other value to have no possibilities, stop.
 		}
 
 		// Process the column containing the tile that was set
 		for (var yi = 0; yi < 9; yi++)
 		{
-			if (yi != y)
-				result.Tiles[x, yi].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[x, yi].Domain.Any())
-				return null;
+			if (yi != y) result.Tiles[x, yi].Domain.Remove(valueOfSetTile); 
+			if (result.Tiles[x, yi].Domain.Count() <= 0) return null;
 		}
 
 		// Process the remains of the block containing the tile that was set
@@ -103,10 +101,10 @@ public class CBT
 			blockY = y - y % 3;
 		for (var by = blockY; by < blockY + 3; by++) for (var bx = blockX; bx < blockX + 3; bx++)
 		{
-			if (bx != x && by != y) // The tile is not on a previously mutated row/column
-				result.Tiles[bx, by].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[bx, by].Domain.Any())
-				return null;
+			if (bx != x && by != y){// The tile is not on a previously mutated row/column
+				result.Tiles[bx, by].Domain.Remove(valueOfSetTile); 
+            } 
+			if (result.Tiles[bx, by].Domain.Count() <= 0) return null;
 		}
 
 		return result;
@@ -152,7 +150,7 @@ public class CBT
 	    for (byte y = 0; y < 9; y++)
 		    for (byte x = 0; x < 9; x++)
 			    if (sudoku.Tiles[x, y].Value is not null) // For every non-empty tile
-				    result = (Sudoku)TryForwardCheck(sudoku, x, y); // Simplify neighbouring domains
+				    result = (Sudoku)TryForwardCheck(result, x, y); // Simplify neighbouring domains
 
         return result;
 					// ^ This will/should always succeed
