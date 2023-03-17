@@ -10,10 +10,10 @@ public struct Tile
 	// The 4 Least-Significant (last) bits represent the current value of the tile.
 	//
 	// Or, more graphically:
-	// [1111111111001111] (Every bit marked with 0 is never utilised)
-	//  ^-------^         Constraint: i-th bit represents if i is a possible value for this tile
-	//           ^        IsFixed: 1 if the tile is fixed, 0 otherwise
-	//              ^--^  Value: the current value of the tile
+	// [1111 1111 1100 1111] (Every bit marked with 0 is never utilised)
+	//  ===========          Constraint: i-th bit represents if i is a possible value for this tile
+	//             =         IsFixed: 1 if the tile is fixed, 0 otherwise
+	//                 ====  Value: the current value of the tile
 
 	public byte Value
 	{
