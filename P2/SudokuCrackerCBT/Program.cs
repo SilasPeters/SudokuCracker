@@ -1,6 +1,6 @@
-﻿namespace SudokuCracker2;
+﻿namespace SudokuCrackerCBT;
 
-class Program
+internal static class Program
 {
 	// Parameters: change these as you wish
 	private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
@@ -12,6 +12,21 @@ class Program
 	
 	static void Main()
 	{
+		// Tile t = new(0, false, new byte[] {});
+		//
+		// Console.WriteLine(t);
+		// Console.WriteLine(t.Value);
+		// Console.WriteLine(t.IsFixed);
+		// Console.WriteLine(t.ConstraintAny());
+		// Console.WriteLine(t.Constraint().ToArray().Aggregate("", (s, b) => s + b));
+		//
+		// t.ConstraintAdd(6);
+		// t.ConstraintRemove(2);
+		//
+		// Console.WriteLine(t.ConstraintAny());
+		// Console.WriteLine(t.Constraint().ToArray().Aggregate("", (s, b) => s + b));
+		// return;
+		
 		// Load sudokus
 		LoadSudokus();
 		Console.WriteLine("The selected sudoku:");

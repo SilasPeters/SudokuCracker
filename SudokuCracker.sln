@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuCracker", "P1\SudokuCracker\SudokuCracker.csproj", "{52FE7744-C5FC-41DE-9968-605986EE2478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuCracker2", "P2\SudokuCracker2\SudokuCracker2.csproj", "{D28D8AF5-AE38-4443-A701-AC8ED4681A5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SudokuCrackerCBT", "P2\SudokuCrackerCBT\SudokuCrackerCBT.csproj", "{D28D8AF5-AE38-4443-A701-AC8ED4681A5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

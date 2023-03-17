@@ -1,4 +1,4 @@
-namespace SudokuCracker2;
+namespace SudokuCrackerCBT;
 
 public class CBT
 {
@@ -31,7 +31,7 @@ public class CBT
         if (sdk.Tiles[x,y].IsFixed) // Value is fixed, don't waste time on branching
 	        return TrySearch(sdk, out result, ++i);
         
-	    foreach(var s in sdk.Tiles[x,y].Domain) {
+	    foreach(var s in sdk.Tiles[x,y].Constraint()) {
 		    sdk.Tiles[x,y].Value = s;
 		    if (!CBTAllowsIt(ref sdk, x, y)) continue;
 		    if (TryForwardCheck(sdk, x, y, out var sdkSimplified)) {
@@ -64,8 +64,8 @@ public class CBT
 		for (var column = 0; column < 9; column++)
 		{
 			if (column != x)
-				result.Tiles[column, y].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[column, y].Domain.Any())
+				result.Tiles[column, y].ConstraintRemove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			if (!result.Tiles[column, y].ConstraintAny())
 				return false;
 		}
 
@@ -73,8 +73,8 @@ public class CBT
 		for (var row = 0; row < 9; row++)
 		{
 			if (row != y)
-				result.Tiles[x, row].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[x, row].Domain.Any())
+				result.Tiles[x, row].ConstraintRemove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			if (!result.Tiles[x, row].ConstraintAny())
 				return false;
 		}
 		
@@ -84,8 +84,8 @@ public class CBT
 		for (var by = blockY; by < blockY + 3; by++) for (var bx = blockX; bx < blockX + 3; bx++)
 		{
 			if (bx != x && by != y) // The tile is not on a previously mutated row/column
-				result.Tiles[bx, by].Domain.Remove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[bx, by].Domain.Any())
+				result.Tiles[bx, by].ConstraintRemove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
+			if (!result.Tiles[bx, by].ConstraintAny())
 				return false;
 		}
 		
@@ -139,7 +139,7 @@ public class CBT
     {
 	    for (byte y = 0; y < 9; y++)
 		    for (byte x = 0; x < 9; x++)
-			    if (sudoku.Tiles[x, y].Value is not null) // For every non-empty tile
+			    if (sudoku.Tiles[x, y].Value is not 0) // For every non-empty tile
 				    TryForwardCheck(sudoku, x, y, out sudoku); // Simplify neighbouring domains
 					// ^ This will/should always succeed
 					
