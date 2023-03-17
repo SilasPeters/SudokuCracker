@@ -8,6 +8,12 @@ public struct Tile
 	// The 9 Most-Significant (first) bits represent the constraints of the tile.
 	// The 1 bit after that resembles whether this tile was given/is fixed.
 	// The 4 Least-Significant (last) bits represent the current value of the tile.
+	//
+	// Or, more graphically:
+	// [1111111111001111] (Every bit marked with 0 is never utilised)
+	//  ^-------^         Constraint: ith bit represents if i is a possible value for this tile
+	//           ^        IsFixed: 1 if the tile is fixed, 0 otherwise
+	//              ^--^  Value: the current value of the tile
 
 	public byte Value
 	{
