@@ -23,8 +23,8 @@ class Program
 		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var solution);
 
 		// Print output
-		Console.WriteLine(solution + "\n");
-		Console.WriteLine(success ? solution : "Whoopsie daisy, you caught us!");
+		Console.WriteLine(solution);
+		if (!success) Console.WriteLine("Whoopsie daisy, you caught us! We could not find a solution.");
 	}
 
 	static void LoadSudokus()
