@@ -11,7 +11,7 @@ public struct Tile
 	//
 	// Or, more graphically:
 	// [1111111111001111] (Every bit marked with 0 is never utilised)
-	//  ^-------^         Constraint: ith bit represents if i is a possible value for this tile
+	//  ^-------^         Constraint: i-th bit represents if i is a possible value for this tile
 	//           ^        IsFixed: 1 if the tile is fixed, 0 otherwise
 	//              ^--^  Value: the current value of the tile
 
