@@ -2,155 +2,163 @@ namespace SudokuCrackerCBT;
 
 public class CBT
 {
-    public static bool TrySearch(Sudoku sdk, out Sudoku result, byte i = 0)
+    public static bool TrySearch(Sudoku sudoku, out Sudoku result, int i = 0)
     {
-        /*
-         * Assumes that all domains are set
-         * 
-		 * if (sudoku.AllTilesFilled()) return true;
-         * 
-         * int x = i % 9, y = i / 9 of zo
-         * 
-         * for every value in tile[x,y].Domain
-         *  tile[x,y].Value = iterated value
-         *  if (!CBTAllowsIt()) break;
-         * 
-         *  if (TryForwardCheck(sudoku, x, y, out var sdk))
-         *      if (TrySearch(sdk, i + 1)) return true;
-         * 
-         * tile[x,y] = null
-         * return false
-         */
-
-
-	    result = sdk;
-        if (sdk.AllTilesFilled())
-	        return true;
-        byte x = (byte)(i % 9), y = (byte)(i / 9);
-        
-        if (sdk.Tiles[x,y].IsFixed) // Value is fixed, don't waste time on branching
-	        return TrySearch(sdk, out result, ++i);
-        
-	    foreach(var s in sdk.Tiles[x,y].Constraint()) {
-		    sdk.Tiles[x,y].Value = s;
-		    if (!CBTAllowsIt(ref sdk, x, y)) continue;
-		    if (TryForwardCheck(sdk, x, y, out var sdkSimplified)) {
-			    if (TrySearch(sdkSimplified, out var attempt, ++i)) {
-				    result = attempt;
-				    return true;
-			    }
-		    }
+	    // Console.Out.WriteLine("i = {0}", i);
+	    // Console.WriteLine(sudoku.ToString());
+	    if (i == 81)
+	    {
+		    result = sudoku;
+		    return true;
 	    }
+
+	    int x = i % 9, y = i / 9;
 	    
+	    if (sudoku.Tiles[x,y].IsFixed) // Don't waste time on branching if the value is fixed
+		    return TrySearch(sudoku, out result, i + 1);
+		 
+	    foreach (var c in sudoku.Tiles[x,y].Constraint())
+	    {
+		    sudoku.Tiles[x, y].Value = c;
+		    // if (!ChangeWasValidOn(sudoku, x, y)) continue;
+		    
+		    if (TryForwardCheck(sudoku, x, y, out var sudokuSimplified)) 
+			    if (TrySearch(sudokuSimplified, out result, i + 1)) return true;
+	    }
+		 
+		sudoku.Tiles[x,y].Value = 0;
+		result = sudoku;
 		return false;
+
+
+	 //    var result = sudoku;
+  //       if (sudoku.AllTilesFilled())
+	 //        return true;
+  //       byte x = (byte)(i % 9), y = (byte)(i / 9);
+  //       
+  //       if (sudoku.Tiles[x,y].IsFixed) // Value is fixed, don't waste time on branching
+	 //        return TrySearch(sudoku, out result, ++i);
+  //       
+	 //    foreach(var s in sudoku.Tiles[x,y].Constraint()) {
+		//     sudoku.Tiles[x,y].Value = s;
+		//     if (!ChangeWasValidOn(ref sudoku, x, y)) continue;
+		//     if (TryForwardCheck(sudoku, x, y, out var sdkSimplified)) {
+		// 	    if (TrySearch(sdkSimplified, out var attempt, ++i)) {
+		// 		    result = attempt;
+		// 		    return true;
+		// 	    }
+		//     }
+	 //    }
+	 //    
+		// return false;
     }
 
     /// <summary>
-    /// After setting a tile, the constraints should be simplified by performing this forward check.
+    /// After setting a tile, the constraint should be simplified by performing this forward check.
     /// This check removes the value of tile[<paramref name="x"/>,<paramref name="y"/>] from the domain of every tile in the block, row and column containing
-    /// tile[<paramref name="x"/>,<paramref name="y"/>]. If a domain turns out to be empty afterwards, it stops.
+    /// tile[<paramref name="x"/>,<paramref name="y"/>]. If a domain turns out to be empty afterwards, it exits and reports failure.
     /// </summary>
-    /// <param name="sudoku"> A copy of the sudoku to mutate. </param>
+    /// <param name="sudoku"> The sudoku to mutate. </param>
     /// <param name="x"> The x-coordinate of the tile which was set before this check. </param>
     /// <param name="y"> The y-coordinate of the tile which was set before this check. </param>
     /// <param name="result"> The sudoku with simplified constraints/domains. Only partially simplified if the check fails. </param>
-    /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set. </returns>
-    private static bool TryForwardCheck(Sudoku sudoku, byte x, byte y, out Sudoku result)
+    /// <returns> Whether the forward check did succeed, and thus if all domains where simplified to a non-empty set only. </returns>
+    private static bool TryForwardCheck(Sudoku sudoku, int x, int y, out Sudoku result)
     {
-		result = sudoku;
-		var valueOfSetTile = (byte) result.Tiles[x, y].Value!;
+		result = sudoku.Clone();
+		var valueOfSetTile = sudoku.Tiles[x, y].Value; // The value of the tile that was set
 
 		// Process the row containing the tile that was set
 		for (var column = 0; column < 9; column++)
 		{
-			if (column != x)
-				result.Tiles[column, y].ConstraintRemove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[column, y].ConstraintAny())
+			if (column == x) continue; // Skip the tile that was set
+			ref var tile = ref result.Tiles[column, y];
+
+			tile.ConstraintRemove(valueOfSetTile);
+			if (!tile.ConstraintAny())
 				return false;
 		}
 
 		// Process the column containing the tile that was set
 		for (var row = 0; row < 9; row++)
 		{
-			if (row != y)
-				result.Tiles[x, row].ConstraintRemove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[x, row].ConstraintAny())
+			if (row == y) continue; // Skip the tile that was set
+			ref var tile = ref result.Tiles[x, row];
+			
+			tile.ConstraintRemove(valueOfSetTile);
+			if (!tile.ConstraintAny())
 				return false;
 		}
 		
 		// Process the remains of the block containing the tile that was set
-		int blockX = x - x % 3,
+		int blockX = x - x % 3, // Coordinates of the top-left tile of the block of the tile that was set
 			blockY = y - y % 3;
 		for (var by = blockY; by < blockY + 3; by++) for (var bx = blockX; bx < blockX + 3; bx++)
 		{
-			if (bx != x && by != y) // The tile is not on a previously mutated row/column
-				result.Tiles[bx, by].ConstraintRemove(valueOfSetTile); // Sometimes the contents domain will be empty if the tile is fixed, but that's fine
-			if (!result.Tiles[bx, by].ConstraintAny())
+			if (bx == x || by == y) continue; // Skip tiles already checked above (and the set tile)
+			ref var tile = ref result.Tiles[bx, by];
+			
+			tile.ConstraintRemove(valueOfSetTile);
+			if (!tile.ConstraintAny())
 				return false;
 		}
+
+		return true;
 		
+		// TODO: propagated ForwardCheck is still an option
+    }
+
+    /// <summary> Checks if the given sudoku still is a partial answer after setting tile[x,y].
+    /// It does so by checking if there are no duplicates in the neighbours of tile[x,y] </summary>
+    private static bool ChangeWasValidOn(in Sudoku s, int x, int y)
+    {
+        // Check if there are no duplicates in the column of tile[x,y]
+        Span<bool> found = stackalloc bool[10];
+		for (var row = 0; row < 9; row++)
+		{
+			if (row == y) continue;
+			var value = s.Tiles[x, row].Value;
+
+			if (value == 0) continue;
+			if (found[value]) return false;
+			found[value] = true;
+		}
+		
+        // Check if there are no duplicates in the row of tile[x,y]
+        found = stackalloc bool[10];
+		for (var column = 0; column < 9; column++)
+		{
+			if (column == x) continue;
+			var value = s.Tiles[column, y].Value;
+			
+			if (value == 0) continue;
+			if (found[value]) return false;
+			found[value] = true;
+		}
+		
+        // Check if there are no duplicates in the block of tile[x,y]
+        found = stackalloc bool[10];
+		int blockX = x - x % 3, // Coordinates of the top-left tile of the block of tile[x,y]
+			blockY = y - y % 3;
+		for (var by = 0; by < 3; by++) for(var bx = 0; bx < 3; bx++)
+			if (bx != x || by != y) // Skip tiles already checked above (and tile[x,y])
+			{
+				var value = s.Tiles[blockX + bx, blockY + by].Value;
+				
+				if (value == 0) continue;
+				if (found[value]) return false;
+				found[value] = true;
+			}
+
 		return true;
     }
 
-    /// <summary> Checks if the given sudoku still is a partial answer after setting tile[x,y] </summary>
-    private static bool CBTAllowsIt(ref Sudoku sdk, byte x, byte y)
-    {
-        /*
-         * De code hieronder kan veel code hergebruiken van Block.txt en de methode herboven
-         * Een sudoku wordt vanaf nu een 9x9 array aan Tiles
-         * Een Tile is niks anders dan een byte (waarde) en een ByteSet (domein)
-         * 
-         * Voor elke waarde in rij y
-         *  Check of er geen duplicates in zitten
-         * Voor elke waarde in kolom x
-         *  Check of er geen duplicates in zitten
-         * Voor elke waarde in block van [x,y]
-         *  Check of er geen duplicates in zitten
-         */
-        var found = new bool[10];
-        for (byte xi = 0; xi < 9; ++xi){
-            var num =sdk.Tiles[xi,y].Value;
-            if (num == null) continue;
-            if (found[(byte)num]) return false;
-            found[(byte)num] = true;
-        }
-        found = new bool[10];
-        for (byte yi = 0; yi < 9; ++yi){
-            var num =sdk.Tiles[x,yi].Value;
-            if (num == null) continue;
-            if (found[(byte)num]) return false;
-            found[(byte)num] = true;
-        }
-        found = new bool[10];
-        byte BlockX = (byte)(x - x % 3), BlockY = (byte)(y - y % 3);
-        for (byte xi = BlockX; xi < BlockX+3; ++xi){
-            for (byte yi = BlockY; yi < BlockY+3; ++yi){
-                var num =sdk.Tiles[xi,yi].Value;
-                if (num == null) continue;
-                if (found[(byte)num]) return false;
-                found[(byte)num] = true;
-            }
-        }
-        return true;
-    }
-
-    /// <summary> Maakt alles knoop-consistent </summary>
+    /// <summary> Makes a given sudoku node-consistent </summary>
     public static void SetDomains(ref Sudoku sudoku)
     {
-	    for (byte y = 0; y < 9; y++)
-		    for (byte x = 0; x < 9; x++)
-			    if (sudoku.Tiles[x, y].Value is not 0) // For every non-empty tile
-				    TryForwardCheck(sudoku, x, y, out sudoku); // Simplify neighbouring domains
-					// ^ This will/should always succeed
-					
-	    /*
-         * Ik heb geen idee of alles nu knoop-consistent is.
-         * Een toevoeging zou dit zijn: Indien je singletons hebt in een domein van een tegel,
-         * moeten alle buren die singelton dus niet in hun domein hebben. Je kunt ook meteen de tegel met een singelton-
-         * domein zijn waarde geven (de singelton). Dit allemaal kan in één zweepslag meegenomen worden in de bestaande
-         * ForwardCheck() methode, die dan PropagatedForwardCheck() kan heten. Dit kan alles sneller maken door onnodige
-         * branching te voorkomen. Het is niet vereist, dus leg ik het hier uit, maar misschien toch weer wel nodig voor
-         * hier, dus leg ik het hier uit :}. Ik heb t al uitgepluisd in mijn hoofd, dus vraag er vooral naar.
-         */
+	    for (byte y = 0; y < 9; y++) for (byte x = 0; x < 9; x++)
+			if (sudoku.Tiles[x, y].Value is not 0) // For every non-empty tile
+				TryForwardCheck(sudoku, x, y, out sudoku); // Simplify neighbouring domains
+				// ^ This will always succeed
     }
 }

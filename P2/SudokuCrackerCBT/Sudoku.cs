@@ -8,7 +8,8 @@ public readonly struct Sudoku
 	[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 	public readonly Tile[,] Tiles = new Tile[9, 9];
 
-	public Sudoku (IReadOnlyList<byte> numbers)
+	public Sudoku() { }
+	public Sudoku (ReadOnlySpan<byte> numbers)
 	{
 		for (var i = 0; i < 81; i++)
 		{
@@ -16,6 +17,14 @@ public readonly struct Sudoku
 				? new Tile(numbers[i], true,  new[] { numbers[i] })
 				: new Tile(0,  false, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 });
 		}
+	}
+	
+	public Sudoku Clone()
+	{
+		var clone = new Sudoku();
+		for (var y = 0; y < 9; y++) for (var x = 0; x < 9; x++)
+			clone.Tiles[x, y] = Tiles[x, y];
+		return clone;
 	}
 
 	public bool AllTilesFilled()

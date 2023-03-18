@@ -1,7 +1,7 @@
 ﻿namespace SudokuCrackerCBT;
 using System.Diagnostics;
 
-[DebuggerDisplay($"{{Value}}, fixed: {{IsFixed}}, backing: {{Constraint}}, backing: {{backing}}")]
+[DebuggerDisplay($"{{Debug}}")]
 public struct Tile
 {
 	private short backing;
@@ -28,7 +28,7 @@ public struct Tile
 	}
 	
 	public void ConstraintAdd(byte x) => backing |= (short) (1 << (16-x)); // Assumes that x < 10
-	public void ConstraintRemove(byte x) => backing &= (short) ~(1 << (16-x));
+	public void ConstraintRemove(byte x) => backing &= (short) ~(1 << (16-x)); // Assumes that x < 10
 	public bool ConstraintAny() => (backing & 0xFF80) != 0;
 	public IEnumerable<byte> Constraint()
 	{
@@ -47,4 +47,5 @@ public struct Tile
 	}
 
 	public override string ToString() => Value != 0 ? Value.ToString() : "-";
+	public string Debug => $"Value: {Value}, IsFixed: {IsFixed}, Constraint: {string.Join(", ", Constraint())}"; 
 }

@@ -4,14 +4,16 @@ internal static class Program
 {
 	// Parameters: change these as you wish
 	private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
-	private const int SUDOKU_INDEX  = 0;
-	private const int PLATEU_LENGTH = 10;
-    
+	private const int SUDOKU_INDEX = 0;
 	
 	private static Sudoku[] _sudokus;
 	
 	static void Main()
 	{
+		//RecursionTestTile(new Tile(0, false, new byte[] { }));
+		// LoadSudokus();
+		// RecursionTestSudoku(_sudokus[0]);
+		// return;
 		// Tile t = new(0, false, new byte[] {});
 		//
 		// Console.WriteLine(t);
@@ -27,19 +29,18 @@ internal static class Program
 		// Console.WriteLine(t.Constraint().ToArray().Aggregate("", (s, b) => s + b));
 		// return;
 		
-		// Load sudokus
 		LoadSudokus();
-		Console.WriteLine("The selected sudoku:");
-		Console.WriteLine(_sudokus[SUDOKU_INDEX]);
+		// Console.WriteLine("The selected sudoku:");
+		// Console.WriteLine(_sudokus[SUDOKU_INDEX].ToString());
         
-		// Solve the sudoku
-		CBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
+		// Solve the sudokus
 		
-		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var solution);
+		CBT.SetDomains(ref _sudokus[SUDOKU_INDEX]);
+		var success = CBT.TrySearch(_sudokus[SUDOKU_INDEX], out var result);
 
 		// Print output
-		Console.WriteLine(solution);
-		if (!success) Console.WriteLine("Whoopsie daisy, you caught us! We could not find a solution.");
+		Console.WriteLine("Result:");
+		Console.WriteLine(success ? result.ToString() : "No solution found");
 	}
 
 	static void LoadSudokus()
@@ -55,5 +56,44 @@ internal static class Program
 		for (var i = 0; i < sudokuCount; i++)
 			_sudokus[i] = new Sudoku(lines[1 + i * 2].Split(' ').Skip(1).Select(byte.Parse).ToArray());
 		//^^ Compensates for that every line starts with ' '
+	}
+
+	static void RecursionTestTile(Tile t)
+	{
+		if (t.Value == 8)
+		{
+			Console.WriteLine("Done!");
+			return;
+		}
+		
+		t.Value += 1;
+		t.ConstraintAdd((byte) (t.Value + 1));
+		
+		Console.WriteLine(t.Debug);
+		RecursionTestTile(t);
+		Console.WriteLine(t.Debug);
+	}
+	
+	static void RecursionTestSudoku(Sudoku s, int i = 0)
+	{
+		if (i == 3)
+		{
+			Console.WriteLine("Done!");
+			return;
+		}
+		
+		s.Tiles[i, i].Value += 1;
+		
+		Console.WriteLine(sum());
+		RecursionTestSudoku(s.Clone(), i + 1);
+		Console.WriteLine(sum());
+
+		int sum()
+		{
+			var sum = 0;
+			for (var y = 0; y < 9; y++) for (var x = 0; x < 9; x++)
+				sum += s.Tiles[x, y].Value;
+			return sum;
+		}
 	}
 }
