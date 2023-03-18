@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace SudokuCracker;
+namespace SudokuCrackerILS;
 [DebuggerDisplay("{Value}, fixed: {IsFixed}")]
 public struct Tile
 {

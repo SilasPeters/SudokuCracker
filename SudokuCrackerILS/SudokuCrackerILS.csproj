@@ -5,18 +5,13 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>SudokuCracker</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <None Update="Sudoku_puzzels_5.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\Assignment.pdf">
-        <Link>Assignment.pdf</Link>
-      </Content>
     </ItemGroup>
 
 </Project>
