@@ -20,37 +20,15 @@ public class CBT
 	    foreach (var c in sudoku.Tiles[x,y].Constraint())
 	    {
 		    sudoku.Tiles[x, y].Value = c;
-		    // if (!ChangeWasValidOn(sudoku, x, y)) continue;
+		    // if (!IsPartialAnswer(sudoku, x, y)) continue; //TODO dit moet toch nodig zijn?
 		    
 		    if (TryForwardCheck(sudoku, x, y, out var sudokuSimplified)) 
 			    if (TrySearch(sudokuSimplified, out result, i + 1)) return true;
 	    }
 		 
-		sudoku.Tiles[x,y].Value = 0;
+		// sudoku.Tiles[x,y].Value = 0; // TODO: test if solutions are still correct
 		result = sudoku;
 		return false;
-
-
-	 //    var result = sudoku;
-  //       if (sudoku.AllTilesFilled())
-	 //        return true;
-  //       byte x = (byte)(i % 9), y = (byte)(i / 9);
-  //       
-  //       if (sudoku.Tiles[x,y].IsFixed) // Value is fixed, don't waste time on branching
-	 //        return TrySearch(sudoku, out result, ++i);
-  //       
-	 //    foreach(var s in sudoku.Tiles[x,y].Constraint()) {
-		//     sudoku.Tiles[x,y].Value = s;
-		//     if (!ChangeWasValidOn(ref sudoku, x, y)) continue;
-		//     if (TryForwardCheck(sudoku, x, y, out var sdkSimplified)) {
-		// 	    if (TrySearch(sdkSimplified, out var attempt, ++i)) {
-		// 		    result = attempt;
-		// 		    return true;
-		// 	    }
-		//     }
-	 //    }
-	 //    
-		// return false;
     }
 
     /// <summary>
@@ -110,7 +88,7 @@ public class CBT
 
     /// <summary> Checks if the given sudoku still is a partial answer after setting tile[x,y].
     /// It does so by checking if there are no duplicates in the neighbours of tile[x,y] </summary>
-    private static bool ChangeWasValidOn(in Sudoku s, int x, int y)
+    private static bool IsPartialAnswer(in Sudoku s, int x, int y)
     {
         // Check if there are no duplicates in the column of tile[x,y]
         Span<bool> found = stackalloc bool[10];

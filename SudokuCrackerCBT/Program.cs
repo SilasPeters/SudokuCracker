@@ -5,7 +5,7 @@ namespace SudokuCrackerCBT;
 internal static class Program
 {
 	// Parameters: change these as you wish
-	private const bool Benchmark = true; // Set this to false to see the answers
+	private const bool Benchmark = false; // Set this to false to see the answers
 	private const string SudokuTestsPath = "Sudoku_puzzels_5.txt";
 	
 	static void Main()
