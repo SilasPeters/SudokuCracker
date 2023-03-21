@@ -14,8 +14,14 @@ public class Benchmarks
 	public int[] SudokuIndexes => Enumerable.Range(0, _sudokus.Length).ToArray();
 
 	[Benchmark]
-	public void SolveSudoku()
+	public void CBT()
 	{
-		Program.SolveSudoku(_sudokus[Sudoku]);
+		Program.SolveSudokuCBT(_sudokus[Sudoku]);
 	}
+	
+	// [Benchmark]
+	// public void CBT_MCV()
+	// {
+	// 	// Program.SolveSudokuCBT(_sudokus[Sudoku]);
+	// }
 }
