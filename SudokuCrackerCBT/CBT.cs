@@ -20,7 +20,7 @@ public class CBT
 	    // Console.WriteLine(sudoku.ToString());
 	    // if (i == 81) // TODO niet AllTilesEmpty()?
 	    if (sudoku.AllTilesFilled()) // If all tiles are filled, we must have a solution because
-                                     // a tile is only filled when that action is valid
+                                     // a tile is only filled when that value is valid
 	    {
 		    result = sudoku; // Pass on the resulting sudoku
 		    return true; // Mark this tiles as successfully filled
@@ -34,7 +34,7 @@ public class CBT
 	    foreach (var c in sudoku.Tiles[x,y].Domain())
 	    {
 		    sudoku.Tiles[x, y].Value = c; // Set the tile to the next value in it's domain
-		    if (!IsPartialAnswer(sudoku, x, y)) continue; //TODO dit moet toch nodig zijn?
+		    if (!IsPartialAnswer(sudoku, x, y)) continue; //TODO dit moet toch niet nodig zijn?
 
 		    if (!TryForwardCheck(sudoku, x, y, out var sudokuSimplified)) // Prevent trashing
 			    continue; // If the forward check fails, try the next value in the domain
@@ -42,7 +42,6 @@ public class CBT
 			    return true; // Only if the recursion succeeds, we stop iterating and report success
 	    }
 		 
-		// sudoku.Tiles[x,y].Value = 0; // TODO: test if solutions are still correct
 		result = sudoku; // Pass on the resulting sudoku
 		return false; // Given the current state, no value in the domain leads to a solution
     }
@@ -111,7 +110,7 @@ public class CBT
         Span<bool> found = stackalloc bool[10];
 		for (var row = 0; row < 9; row++)
 		{
-			// if (row == y) continue;
+			// if (row == y) continue; TODO
 			var value = s.Tiles[x, row].Value;
 
 			if (value == 0) continue; // Empty tiles are not considered duplicates
@@ -123,7 +122,7 @@ public class CBT
         found = stackalloc bool[10];
 		for (var column = 0; column < 9; column++)
 		{
-			// if (column == x) continue;
+			// if (column == x) continue; TODO
 			var value = s.Tiles[column, y].Value;
 			
 			if (value == 0) continue; // Empty tiles are not considered duplicates
@@ -136,7 +135,7 @@ public class CBT
 		int blockX = x - x % 3, // Coordinates of the top-left tile of the block of tile[x,y]
 			blockY = y - y % 3;
 		for (var by = 0; by < 3; by++) for(var bx = 0; bx < 3; bx++)
-			// if (bx != x || by != y) // Skip the set tile
+			// if (bx != x || by != y) // Skip the set tile TODO
 		{
 			var value = s.Tiles[blockX + bx, blockY + by].Value;
 			

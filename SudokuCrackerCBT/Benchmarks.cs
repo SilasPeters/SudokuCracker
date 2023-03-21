@@ -19,9 +19,9 @@ public class Benchmarks
 		Program.SolveSudokuCBT(_sudokus[Sudoku]);
 	}
 	
-	[Benchmark]
-	public void CBT_MCV()
-	{
-		// Program.SolveSudokuCBT(_sudokus[Sudoku]);
-	}
+	// [Benchmark]
+	// public void CBT_MCV()
+	// {
+	// 	// Program.SolveSudokuCBT(_sudokus[Sudoku]);
+	// }
 }

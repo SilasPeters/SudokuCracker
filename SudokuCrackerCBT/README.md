@@ -16,11 +16,12 @@ When running in benchmark mode, the program will print the results to the consol
 At first you will see that BenchmarkDotNet is warming up, and after that it will run the benchmarks.
 When completed, the following table is what you want to look at:
 ```
-[TOOD: Insert table of latest benchmark]
+[TODO: Insert table of latest benchmark]
 ```
 **Method**: the method used to solve the sudoku.\
 **Sudoku**: the sudoku to solve.\
 **Mean**: the mean time it took to solve the sudoku.\
+**Gen0**: the average number of times the garbage collector was called.\
 **Allocated**: the amount of memory allocated to solve the sudoku.
 
 These are some results I got on my laptop. As you can see, 5 benchmarks were run, one for each sudoku to solve.
