@@ -3,9 +3,9 @@
 In Program.cs you can set two constants:
 - Benchmark
   - True: shows benchmarks.\
-    **NOTE: project must be run in release mode.**
+    **NOTE: project must be run in release mode, and there may not be weird characters in the path to the project (like spaces or underscores).**
   - False: shows the solutions to the sudokus.
-- SudokuTestsPath
+- SudokusPath
   - Relative path to a file containing the sudokus to solve, following the format specified in the example sudokus.
   - You can add as many sudokus as you like, the code will handle them.
 
