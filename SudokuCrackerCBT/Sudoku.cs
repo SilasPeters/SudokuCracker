@@ -44,35 +44,18 @@ public readonly struct Sudoku
 	public override string ToString()
 	{
 		StringBuilder sb = new();
-		// (9 numbers with spaces, minus the last space) + 2 separating bars with 2 spaces
-		const int totalWidth = (9 * 2 - 1) + 4;
-
 		for (var y = 0; y < 9; y++) // For every row
 		{
-			// Print the whole row
-			for (var x = 0; x < 9; x++)
-				sb.Append($"{Tiles[x,y]} ");
-
-			// Insert the vertical pipes
-			insertVertically("│ ");
-			
-			// Add horizontal pipes if needed
-			if (y != 8 && (y + 1) % 3 == 0)
+			for (var x = 0; x < 9; x++) // For every column
 			{
-				sb.AppendLine();
-				sb.Append('─', totalWidth - 3);
-				insertVertically("┼─");
+				sb.Append($"{Tiles[x,y].ToString()} ");
+				if (x is 2 or 5)
+					sb.Append("│ ");
 			}
-			
-			// Start a new line
 			sb.AppendLine();
-
-			// Helper method
-			void insertVertically(string separator)
-			{
-				sb.Insert(sb.Length - 6 * 2, separator);
-				sb.Insert(sb.Length - 3 * 2, separator);
-			}
+			
+			if (y is 2 or 5)
+				sb.AppendLine("──────┼───────┼──────");
 		}
 		
 		return sb.ToString();
