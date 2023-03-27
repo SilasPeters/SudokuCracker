@@ -5,7 +5,9 @@ namespace SudokuCrackerCBT;
 internal static class Program
 {
 	// Parameters: change these as you wish
-	private const bool Benchmark = false; // Set this to false to see the answers to the sudokus
+	private const bool Benchmark = true; // Set this to false to see the answers to the sudokus
+	private const bool UseMostConstrainedVariable = true; // Opt in to MCV heuristics. Does not affect benchmarks
+	private const bool CountIterations = true; // Opt in to counting iterations. Does not affect benchmarks
 	private const string SudokusPath = "Sudoku_puzzels_5.txt";
 	
 	static void Main()
@@ -19,11 +21,21 @@ internal static class Program
 			var sudokus = LoadSudokus();
 			for (var i = 0; i < sudokus.Length; i++) // For every sudoku loaded
 			{
-				var result = SolveSudokuCBT(sudokus[i]); // Try to solve it
+				var result = UseMostConstrainedVariable // Try to solve it
+					? SolveSudokuCBT_MCV(sudokus[i])
+					: SolveSudokuCBT(sudokus[i]);
 				
 				// Print the result
-				Console.WriteLine($"Solution to sudoku {i + 1}:");
+				Console.WriteLine($"Solution to sudoku {i}:");
+				if (CountIterations) {
+					var iterations = UseMostConstrainedVariable ? CBT_MCV.IterationCount : CBT.IterationCount;
+					Console.WriteLine($"Iterations needed: {iterations}");
+				}
 				Console.WriteLine(result.ToString());
+				
+				// Reset iteration counter
+				CBT.IterationCount = 0;
+				CBT_MCV.IterationCount = 0;
 			}
 		}
 		
@@ -52,10 +64,17 @@ internal static class Program
 	/// <returns> The sudoku that results after attempting to solve it. </returns>
 	public static Sudoku SolveSudokuCBT (Sudoku s)
 	{
-		// Console.WriteLine("Solving:");
-		// Console.WriteLine(s.ToString());
 		CBT.SetDomains(ref s);
 		CBT.TrySearch(s, out var result);
+		return result;
+	}
+	
+	/// <summary> Tries to solve the sudoku '<paramref name="s"/>' using the CBT algorithm using MCV heuristics. </summary>
+	/// <returns> The sudoku that results after attempting to solve it. </returns>
+	public static Sudoku SolveSudokuCBT_MCV (Sudoku s)
+	{
+		CBT_MCV.SetDomains(ref s);
+		CBT_MCV.TrySearch(s, out var result);
 		return result;
 	}
 
