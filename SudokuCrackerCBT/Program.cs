@@ -38,26 +38,6 @@ internal static class Program
 				CBT_MCV.IterationCount = 0;
 			}
 		}
-		
-		//RecursionTestTile(new Tile(0, false, new byte[] { }));
-		// LoadSudokus();
-		// RecursionTestSudoku(Sudokus[0]);
-		// return;
-		// Tile t = new(0, false, new byte[] {});
-		//
-		// Console.WriteLine(t);
-		// Console.WriteLine(t.Value);
-		// Console.WriteLine(t.IsFixed);
-		// Console.WriteLine(t.DomainNotEmpty());
-		// Console.WriteLine(t.Domain().ToArray().Aggregate("", (s, b) => s + b));
-		//
-		// t.ConstraintAdd(6);
-		// t.DomainRemove(2);
-		//
-		// Console.WriteLine(t.DomainNotEmpty());
-		// Console.WriteLine(t.Domain().ToArray().Aggregate("", (s, b) => s + b));
-		// return;
-		
 	}
 	
 	/// <summary> Tries to solve the sudoku '<paramref name="s"/>' using the CBT algorithm. </summary>
@@ -99,43 +79,4 @@ internal static class Program
 
 		return sudokus;
 	}
-
-	// static void RecursionTestTile(Tile t)
-	// {
-	// 	if (t.Value == 8)
-	// 	{
-	// 		Console.WriteLine("Done!");
-	// 		return;
-	// 	}
-	// 	
-	// 	t.Value += 1;
-	// 	t.ConstraintAdd((byte) (t.Value + 1));
-	// 	
-	// 	Console.WriteLine(t.Debug);
-	// 	RecursionTestTile(t);
-	// 	Console.WriteLine(t.Debug);
-	// }
-	//
-	// static void RecursionTestSudoku(Sudoku s, int i = 0)
-	// {
-	// 	if (i == 3)
-	// 	{
-	// 		Console.WriteLine("Done!");
-	// 		return;
-	// 	}
-	// 	
-	// 	s.Tiles[i, i].Value += 1;
-	// 	
-	// 	Console.WriteLine(sum());
-	// 	RecursionTestSudoku(s.Clone(), i + 1);
-	// 	Console.WriteLine(sum());
-	//
-	// 	int sum()
-	// 	{
-	// 		var sum = 0;
-	// 		for (var y = 0; y < 9; y++) for (var x = 0; x < 9; x++)
-	// 			sum += s.Tiles[x, y].Value;
-	// 		return sum;
-	// 	}
-	// }
 }

@@ -147,51 +147,6 @@ public class CBT_MCV
 		return true; // All domains of neighbouring tiles simplified successfully
     }
 
-    /// <summary>
-    /// Checks if the given sudoku still is a partial answer after setting tile[<paramref name="x"/>,<paramref name="y"/>].
-    /// It does so by checking if there are no duplicates in the neighbours of tile[<paramref name="x"/>,<paramref name="y"/>].
-    /// </summary>
-    /// <returns> Whether no constraint is violated. </returns>
-    private static bool IsPartialAnswer (in Sudoku s, int x, int y)
-    {
-        // Check if there are no duplicates in the column of tile[x,y]
-        Span<bool> found = stackalloc bool[10];
-		for (var row = 0; row < 9; row++)
-		{
-			var value = s.Tiles[x, row].Value;
-
-			if (value == 0) continue; // Empty tiles are not considered duplicates
-			if (found[value]) return false;
-			found[value] = true; // Already found, constraint violated
-		}
-		
-        // Check if there are no duplicates in the row of tile[x,y]
-        found = stackalloc bool[10];
-		for (var column = 0; column < 9; column++)
-		{
-			var value = s.Tiles[column, y].Value;
-			
-			if (value == 0) continue; // Empty tiles are not considered duplicates
-			if (found[value]) return false;
-			found[value] = true; // Already found, constraint violated
-		}
-		
-        // Check if there are no duplicates in the block of tile[x,y]
-        found = stackalloc bool[10];
-		int blockX = x - x % 3, // Coordinates of the top-left tile of the block of tile[x,y]
-			blockY = y - y % 3;
-		for (var by = 0; by < 3; by++) for(var bx = 0; bx < 3; bx++)
-		{
-			var value = s.Tiles[blockX + bx, blockY + by].Value;
-			
-			if (value == 0) continue; // Empty tiles are not considered duplicates
-			if (found[value]) return false;
-			found[value] = true; // Already found, constraint violated
-		}
-
-		return true; // No constraint violations found
-    }
-
     /// <summary> Makes a given sudoku node-consistent by simplifying domains </summary>
     public static void SetDomains (ref Sudoku sudoku)
     {

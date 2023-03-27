@@ -31,7 +31,7 @@ public readonly struct Sudoku
 		return clone;
 	}
 
-	public bool AllTilesFilled()
+	public bool AllTilesFilled() // IS NEVER USED
 	{
 		// Start looking from the lower-right side of the array, to see if a tile has not been set yet.
 		// This direction assumes that tiles are set starting from the top-left in reading direction.

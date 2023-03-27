@@ -1,7 +1,7 @@
 ﻿namespace SudokuCrackerCBT;
 using System.Diagnostics;
 
-[DebuggerDisplay($"{{Debug}}")]
+[DebuggerDisplay("{{Debug}}")]
 public struct Tile
 {
 	private ushort _backing; // ushort is a 16-bit value-type variable which stores:

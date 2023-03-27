@@ -29,7 +29,7 @@ public class CBT
 	    
 	    int x = i % 9, y = i / 9; // x and y coordinates of the tile with index i
 	    
-	    if (sudoku.Tiles[x,y].IsFixed) // If the tile is fixed/given, skip it // TODO dit moet worden 'if (sudoku.Tiles[x,y].Value != 0)'
+	    if (sudoku.Tiles[x,y].IsFixed) // If the tile is fixed/given, skip it
 		    return TrySearch(sudoku, out result, i + 1); // Recurse and try the next tile
 		 
 	    foreach (var c in sudoku.Tiles[x,y].Domain())
@@ -105,7 +105,7 @@ public class CBT
     /// It does so by checking if there are no duplicates in the neighbours of tile[<paramref name="x"/>,<paramref name="y"/>].
     /// </summary>
     /// <returns> Whether no constraint is violated. </returns>
-    private static bool IsPartialAnswer (in Sudoku s, int x, int y)
+    private static bool IsPartialAnswer (in Sudoku s, int x, int y) // IS NEVER USED
     {
         // Check if there are no duplicates in the column of tile[x,y]
         Span<bool> found = stackalloc bool[10];
