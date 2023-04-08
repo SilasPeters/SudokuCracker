@@ -4,7 +4,7 @@ Two approaches to solving Sudokus
 I'm mostly proud of the Chronological Backtracking variant (CBT), which also implements Most-Constrained-Variable heuristics. I worked on the CBT variant myself, whilst the Iterated Local Search (ILS} variant was made with my school-mates.
 
 ## Report
-Included with the CBT variant, is a [report](/SudokuCrackerCBT/Report%20on%20CBT%20with%20MCV.md) (also availabe in ``.docx`` and ``.pdf``) on developing and exploring the CBT algorithm.
+Included with the CBT variant, is a [report](/SudokuCrackerCBT/Report%20on%20CBT%20with%20MCV.md) (also availabe in ``.docx`` and ``.pdf``) (at this point only in Dutch) on developing and exploring the CBT algorithm.
 
 ## Benchmarks
 ```
