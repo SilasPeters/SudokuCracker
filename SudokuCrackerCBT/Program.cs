@@ -5,8 +5,8 @@ namespace SudokuCrackerCBT;
 internal static class Program
 {
 	// Parameters: change these as you wish
-	private const bool Benchmark = false; // Set this to false to see the answers to the sudokus
-	private const bool UseMostConstrainedVariable = true; // Opt in to MCV heuristics. Does not affect benchmarks
+	private const bool Benchmark = true; // Set this to false to see the answers to the sudokus
+	private const bool UseMostConstrainedVariable = false; // Opt in to MCV heuristics. Does not affect benchmarks
 	private const bool CountIterations = true; // Opt in to counting iterations. Does not affect benchmarks
 	private const string SudokusPath = "Sudoku_puzzels_5.txt";
 	
